@@ -1,0 +1,22 @@
+#logs {
+	width: 100%;
+	height: 120 dp;
+}
+#lists {
+	width: 100%;
+	height: 240 dp;
+}
+
+#inputText {
+	width: 60%;
+	height: auto;
+}
+
+.inlineBlock {
+	display: inline-block;
+}
+
+#addButton {
+	width: 30%;
+	height: 2em;
+}
