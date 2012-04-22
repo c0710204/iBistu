@@ -101,7 +101,6 @@
 		//即须加单引号.经网上查询得，如果不加引号或空格，将会把逗号与字符串等看成一个字符串。
 		db.executeSql("INSERT INTO iBistu (id, data) VALUES ("+ counter + ",'"+ inputString + "')");
 		counter++;
-		alert(counter);
 	}
 	
 	GLOBAL.MAIN.getInfo = function(){
@@ -317,6 +316,40 @@
 					 + courseID9 + "','" + courseID10 + "','" + courseID11+ "')");
 		}
 	}
+	
+	var getIntro = document.getElementById("getIntro");
+	
+	getIntro.addEventListener("click",getIntroInfo,false);
+	
+	var myXML = new XMLHttpRequest();
+	
+	function getIntroInfo(){
+		
+		function getInfo(){
+		
+		console.log("Get info");
+		if(myXML.readyState == 4){
+			var respons = myXML.responseText;
+			var jsonText = JSON.parse(respons);
+			
+			log.innerHTML = "<p>" + jsonText[0].id + "-->" + jsonText[0].introName + "</p>";
+			
+			}
+		}
+		
+		myXML.onreadystatechange = getInfo;
+		myXML.open("GET","http://m.bistu.edu.cn/api/api.php?table=intro&action=list",true);
+		myXML.send(null);
+		console.log("Get success");
+		
+	
+
+	}
+	
+	
+	
+	
+	
 	
 	
 	
