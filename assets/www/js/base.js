@@ -57,7 +57,7 @@ function populateDB(db) {
 
     db.executeSql('CREATE TABLE IF NOT EXISTS building (id unique, buidingCode,buidingName)', [], createTableOrNot);
     db.executeSql('CREATE TABLE IF NOT EXISTS classroom (id unique, roomName,roomCode,buildingId)', [], createTableOrNot);
-    db.executeSql('CREATE TABLE IF NOT EXISTS college (id unique, collegeName,collegeCode)', [], createTableOrNot);
+    db.executeSql('CREATE TABLE IF NOT EXISTS college (collegeName,collegeCode)', [], createTableOrNot);
     db.executeSql('CREATE TABLE IF NOT EXISTS course (id unique, courseName,courseCode,courseTeacher,courseInfo,majorId)', [], createTableOrNot);
     db.executeSql('CREATE TABLE IF NOT EXISTS major (id unique, majorName,majorCode,collegeId)', [], createTableOrNot);
     db.executeSql('CREATE TABLE IF NOT EXISTS classtime (id unique, classroomId,date,courseId1,courseId2,courseId3,' + 'courseId4,courseId5,courseId6,courseId7,courseId8,courseId9,courseId10,courseId11)', [], createTableOrNot);
@@ -175,11 +175,10 @@ function insertCollegeTable(tx) {
     var college = getCollegeInfo();
 
     if(college != null) {
-        var collegeID = college["id"];
         var collegeName = college["collegeName"];
         var collegeCode = college["collegeCode"];
 
-        tx.executeSql("insert into college (id,collegeName,collegeCode) values (" + "'" + collegeID + "','" + collegeName + "','" + collegeCode + "')");
+        tx.executeSql("insert into college (collegeName,collegeCode) values (" + collegeName + "','" + collegeCode + "')");
     }
 
 }
