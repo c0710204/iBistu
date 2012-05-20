@@ -16,7 +16,7 @@
 
 var iBistuDB,collegeItemLength;
 var databaseExist = window.localStorage.getItem("databaseExist");
-var updateCollege = window.localStorage.getItem("updateCollege");
+var updateAllTables = window.localStorage.getItem("updateAllTables");
 
 console.log("database status--->" + databaseExist);
 
@@ -25,6 +25,11 @@ console.log("database status--->" + databaseExist);
  * then parse and return the responseText to json!
  * */
 function getFromServer(type,url){
+    //If url is null,then return;
+    if(url == "" || url == null){
+        return;
+    }
+    
     var xhr = new XMLHttpRequest();
     var resp = null;
     xhr.onreadystatechange = function(){
@@ -32,20 +37,12 @@ function getFromServer(type,url){
             if((xhr.status >= 200 && xhr.status < 300)|| xhr.status == 304){
                 try{
                     resp = JSON.parse(xhr.responseText);
-                    // collegeItemLength = resp.length;
-                    // for(var i = 0, len = resp.length; i < len; i++){
-                        // console.log("collegeName="+resp[i].collegeName + ",collegeCode=" + resp[i].collegeCode);
-                        // var temName = "collegeName" + i;
-                        // var temCode = "collegeCode" + i;
-                        // window.localStorage.setItem(temName,resp[i].collegeName);
-                        // window.localStorage.setItem(temCode,resp[i].collegeCode);
-                        // }
+
                     switch(type){
                         case "college": (function(){
                             iBistuDB.transaction(function(tx){
-                                console.log("Transaction execute!");
                                 tx.executeSql('DROP TABLE IF EXISTS college');
-                                tx.executeSql('create table if not exists college (collegeName,collegeCode)')
+                                tx.executeSql('create table if not exists college (id INTEGER PRIMARY KEY,collegeName,collegeCode)')
                                 for(var i = 0, len = resp.length; i < len; i++){
                                     tx.executeSql('insert into college (collegeName,collegeCode)' +
                                 ' values ("'+ resp[i].collegeName + '","' + resp[i].collegeCode +'")');
@@ -54,10 +51,43 @@ function getFromServer(type,url){
                             errorCB,
                             successCB);
                         })();break;
-                        case "building": updateBuilding;break;
-                        
-                        
-                        default: noUpdate;
+                        case "major": (function(){
+                            iBistuDB.transaction(function(tx){
+                                tx.executeSql('drop table if exists major');
+                                tx.executeSql('create table if not exists major (id INTEGER PRIMARY KEY, majorName,majorCode,collegeId)');
+                                for(var i = 0, len = resp.length; i < len; i++){
+                                    tx.executeSql("insert into major (majorName,majorCode,collegeId) values ('" + resp[i].majorName + "','" + resp[i].majorCode + "','" + resp[i].collegeID + "')");
+                                }
+                            },
+                            errorCB,
+                            successCB);
+                        })();break;
+                        case "building": (function(){
+                            iBistuDB.transaction(function(tx){
+                                tx.executeSql('drop table if exists building');
+                                
+                            },
+                            errorCB,
+                            successCB);
+                        })();break;
+                        case "courseDetail": (function(){
+                            
+                        })(); break;
+                        case "courseList": (function(){
+                            
+                        })();break;
+                        case "course": (function(){
+                            
+                        })();break;
+                        case "classTime": (function(){
+                            
+                        })();break;
+                        case "classroom": (function(){
+                            
+                        })();break;
+                        default: (function(){
+                           console.log("Update error!"); 
+                        })();
                     }    
                     
                 }catch(e){
@@ -74,7 +104,7 @@ function getFromServer(type,url){
 }
 
 /*
- * database create!
+ * create database or open the database;
  * */
 (function onDeviceReady() {
     /*
@@ -87,18 +117,27 @@ function getFromServer(type,url){
         iBistuDB.transaction(populateDB, errorCB, successCB);
     }
     
-    if(iBistuDB == undefined){
+    if(iBistuDB != undefined){
         databaseExist = true;
         window.localStorage.setItem("databaseExist","true");
     }
     else {
         window.localStorage.setItem("databaseExit","false");
     }
-    //just for test & use funciotn insertCollegeNow!
-    if(updateCollege != null){
+    
+    //Update all tables if necessary!
+    if(updateAllTables != "updated"){
         
-        iBistuDB.transaction(insertCollegeTable, errorCB, successCB);
-        window.localStorage.setItem("updateCollege","update");
+        updateBuildingTable();
+        updateClassroomTable();
+        updateClasstimeTable();
+        updateCollegeTable();
+        updateCourseDetailTable();
+        updateCourseListTable();
+        updateCourseTable();
+        updateMajorTable();
+        
+        window.localStorage.setItem("updateAllTables","updated");
     }
     
 })();
@@ -118,15 +157,16 @@ function createTableOrNot(tx, results) {
 // 初始化各个表(如果表格不存在的话)
 function populateDB(db) {
 
-    db.executeSql('CREATE TABLE IF NOT EXISTS building (id unique, buidingCode,buidingName)', [], createTableOrNot);
-    db.executeSql('CREATE TABLE IF NOT EXISTS classroom (id unique, roomName,roomCode,buildingId)', [], createTableOrNot);
-    db.executeSql('CREATE TABLE IF NOT EXISTS college (collegeName,collegeCode)', [], createTableOrNot);
-    db.executeSql('CREATE TABLE IF NOT EXISTS course (id unique, courseName,courseCode,courseTeacher,courseInfo,majorId)', [], createTableOrNot);
-    db.executeSql('CREATE TABLE IF NOT EXISTS major (id unique, majorName,majorCode,collegeId)', [], createTableOrNot);
-    db.executeSql('CREATE TABLE IF NOT EXISTS classtime (id unique, classroomId,date,courseId1,courseId2,courseId3,' + 'courseId4,courseId5,courseId6,courseId7,courseId8,courseId9,courseId10,courseId11)', [], createTableOrNot);
+    db.executeSql('CREATE TABLE IF NOT EXISTS building (id INTEGER PRIMARY KEY, buidingId,buidingName)', [], createTableOrNot);
+    db.executeSql('CREATE TABLE IF NOT EXISTS classroom (id INTEGER PRIMARY KEY, roomName,roomCode,buildingId)', [], createTableOrNot);
+    db.executeSql('CREATE TABLE IF NOT EXISTS college (id INTEGER PRIMARY KEY,collegeName,collegeCode)', [], createTableOrNot);
+    db.executeSql('CREATE TABLE IF NOT EXISTS course (id INTEGER PRIMARY KEY, courseName,courseEngName,courseCode,courseInfo,courseXs,courseXf,courseXz,courseLb)', [], createTableOrNot);
+    db.executeSql('CREATE TABLE IF NOT EXISTS coursedetail (id INTEGER PRIMARY KEY,courseListId,courseTeacher,coursePlace,courseTime)', [], createTableOrNot);
+    db.executeSql('CREATE TABLE IF NOT EXISTS courselist (id INTEGER PRIMARY KEY,courseCode,courseName,majorId)', [], createTableOrNot);
+    db.executeSql('CREATE TABLE IF NOT EXISTS major (id INTEGER PRIMARY KEY, majorName,majorCode,collegeId)', [], createTableOrNot);
+    db.executeSql('CREATE TABLE IF NOT EXISTS classtime (id INTEGER PRIMARY KEY, classroomId,date,courseId1,courseId2,courseId3,courseId4,courseId5,courseId6,courseId7,courseId8,courseId9,courseId10,courseId11)', [], createTableOrNot);
     
-    
-    console.log("populateDB execute!");
+    console.log("create tables because it's not exist!");
 }
 
 // 当执行SQL失败后调用此方法
@@ -151,105 +191,62 @@ function successCB() {
 
 //**************************************************************
 
-function insertBuildingTable(tx) {
+function updateBuildingTable() {
     
     var url = "";
-    var building = getFromServer(url);
+    var type = "building";
+    getFromServer(type,url);
 
-    if(building != null) {
-        var buildingID = building["id"];
-        var buildingCode = building["buildingCode"];
-        var buildingName = building["buildingName"];
-
-        tx.executeSql("insert into building (id,buildingCode,buildingName) values (" + "'" + buildingID + "','" + buildingCode + "','" + buildingName + "')");
-    }
+// tx.executeSql("insert into building (id,buildingCode,buildingName) values (" + "'" + buildingID + "','" + buildingCode + "','" + buildingName + "')");
 }
 
-function insertClassroomTable(tx) {
-
-    if(classroom != null) {
-        var roomID = classroom["id"];
-        var roomName = classroom['roomName'];
-        var roomCode = classroom["roomCode"];
-        var buidingID = classroom["buildingId"];
-
-        tx.executeSql("insert into classroom (id,roomName,roomCode,buildingId) values('" + roomID + "','" + roomName + "','" + roomCode + "','" + buildingID + "')");
-    }
+function updateCourseDetailTable(){
+    var url = "http://m.bistu.edu.cn/api/api.php?table=coursedetail&action=getcoursedetail";
+    var type = "courseDetail";
+    getFromServer(type,url);
 }
 
-function insertCollegeTable(tx) {
-    var url = "http://m.bistu.edu.cn/api/api.php?table=college&action=getcollegelist";
-    // var college = getFromServer(url);
-//     
-    // for(var i = 0, len = college.length; i < len; i++){
-        // console.log("name: "+college[i].collegeName);
-    // }
-//     
-    // console.log(typeof college);
+function updateCourseListTable(){
+    var url = "http://m.bistu.edu.cn/api/api.php?table=courselist&action=getcourselist";
+    var type = "courseList";
+    getFromServer(type,url);
+}
+
+function updateClassroomTable() {
     
-    var type = "college";
+    var url = "";
+    var type = "classroom";
     getFromServer(type,url);
     
-    // if(college != null) {
-        // var collegeName = college["collegeName"];
-        // var collegeCode = college["collegeCode"];
-// 
-        // tx.executeSql("insert into college (collegeName,collegeCode) values ('" + collegeName + "','" + collegeCode + "')");
-    // }
+// tx.executeSql("insert into classroom (id,roomName,roomCode,buildingId) values('" + roomID + "','" + roomName + "','" + roomCode + "','" + buildingID + "')");
 }
 
-function insertCourseTable(tx) {
-    var url = "";
-    var course = getFromServer(url);
-
-    if(course != null) {
-        var courseID = course["id"];
-        var courseName = course["courseName"];
-        var courseCode = course["courseCode"];
-        var courseTeacher = course["courseTeacher"];
-        var courseInfo = course["courseInfo"];
-        var majorID = course["majorId"];
-
-        tx.executeSql("insert into course (id,courseName,courseCode,courseTeacher,courseInfo,majorId) " + "values (" + "'" + courseID + "','" + courseName + "','" + courseCode + "','" + courseTeacher + "','" + courseInfo + "','" + majorID + "')");
-    }
+function updateCollegeTable() {
+    var url = "http://m.bistu.edu.cn/api/api.php?table=college&action=getcollegelist";
+    var type = "college";
+    getFromServer(type,url);
 }
 
-function insertMajorTable(tx) {
-    var url = "";
-    var major = getFromServer(url);
+function updateCourseTable() {
+    var url = "http://m.bistu.edu.cn/api/api.php?table=course&action=getcourse";
+    var type = "course";
+    course = getFromServer(type,url);
 
-    if(major != null) {
-        var majorID = major["id"];
-        var majorName = major["majorName"];
-        var majorCode = major["majorCOde"];
-        var collegeID = major["collegeId"];
-
-        tx.executeSql("insert into major (id,majorName,majorCode,collegeId) values (" + "'" + majorID + "','" + majorName + "','" + majorCode + "','" + collegeID + "')");
-    }
+// tx.executeSql("insert into course (id,courseName,courseCode,courseTeacher,courseInfo,majorId) " + "values (" + "'" + courseID + "','" + courseName + "','" + courseCode + "','" + courseTeacher + "','" + courseInfo + "','" + majorID + "')");
 }
 
-function insertClasstimeTable(tx) {
+function updateMajorTable() {
+    var url = "http://m.bistu.edu.cn/api/api.php?table=major&action=getmajorlist";
+    var type = "major";
+    getFromServer(type,url);
+}
+
+function updateClasstimeTable() {
     var url = "";
-    var classtime = getFromServer(url);
+    var type = "classtime";
+    getFromServer(type,url);
 
-    if(classtime != null) {
-        var classtimeID = classtime["id"];
-        var classroomID = classtime["classroomId"];
-        var classDate = classtime["date"];
-        var courseID1 = classtime["courseId1"];
-        var courseID2 = classtime["courseId2"];
-        var courseID3 = classtime["courseId3"];
-        var courseID4 = classtime["courseId4"];
-        var courseID5 = classtime["courseId5"];
-        var courseID6 = classtime["courseId6"];
-        var courseID7 = classtime["courseId7"];
-        var courseID8 = classtime["courseId8"];
-        var courseID9 = classtime["courseId9"];
-        var courseID10 = classtime["courseId10"];
-        var courseID11 = classtime["courseId11"];
-
-        tx.executeSql("insert into classtime (id,classroomId,date," + "courseId1,courseId2,courseId3,courseId4,courseId5,courseId6,courseId7,courseId8,courseId9,courseId10,courseId11)" + "values (" + "'" + classtimeID + "','" + classroomID + "','" + classDate + "','" + courseID1 + "','" + courseID2 + "','" + courseID3 + "','" + courseID4 + "','" + courseID5 + "','" + courseID6 + "','" + courseID7 + "','" + courseID8 + "','" + courseID9 + "','" + courseID10 + "','" + courseID11 + "')");
-    }
+// tx.executeSql("insert into classtime (id,classroomId,date," + "courseId1,courseId2,courseId3,courseId4,courseId5,courseId6,courseId7,courseId8,courseId9,courseId10,courseId11)" + "values (" + "'" + classtimeID + "','" + classroomID + "','" + classDate + "','" + courseID1 + "','" + courseID2 + "','" + courseID3 + "','" + courseID4 + "','" + courseID5 + "','" + courseID6 + "','" + courseID7 + "','" + courseID8 + "','" + courseID9 + "','" + courseID10 + "','" + courseID11 + "')");
 }
 
 //--------------------------------------------------------------------------------

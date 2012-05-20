@@ -10,7 +10,7 @@ function getSuccess(tx,results){
     var result = results.rows;
     for(var i = 0; i < len; i++){
         console.log("row = "+ i + " ;collegName = " + result.item(i).collegeName + "; collegeCode=" + result.item(i).collegeCode);
-        innerHTML += '<li><a href="#">'+ result.item(i).collegeName + "</a></li>";
+        innerHTML += '<li><a href="major.html" id="'+collegeCode+'">'+ result.item(i).collegeName + "</a></li>";
     }
     $("#mainContent4course").html(innerHTML);
     $("#mainContent4course").listview('refresh');
@@ -21,7 +21,7 @@ function getError(e){
 }
 
 function getCollegeInformation(tx){
-    tx.executeSql('select * from college limit 14',[],getSuccess,getError);
+    tx.executeSql('select * from college limit 10',[],getSuccess,getError);
 }
 
 (function(){
@@ -43,6 +43,15 @@ function getCollegeInformation(tx){
         
     console.log("change the html!!!!");
 })();
+
+$(document).ready(function(){
+    $("li a").each(function(index) {
+        $(this).click(function(){
+           var queryID = $(this).attr("id");
+           window.localStorage.setItem("majorQueryId",queryID);
+        });
+    });;
+});
 
 
 

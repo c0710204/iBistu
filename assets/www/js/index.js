@@ -21,7 +21,6 @@ $(document).ready(function() {
         //点击每一个图标时候，把相应的ID存入localStorage中。
         $(this).click(function() {
             var id = $(this).attr("id").slice(6);
-            console.log("input id--->" + id);
             window.localStorage.setItem("queryID",id);
         });
 
