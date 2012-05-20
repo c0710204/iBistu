@@ -5,8 +5,8 @@
 
 $(document).bind("mobileinit", function() {
     $.mobile.defaultPageTransition = 'none';
-    // $.mobile.allowCrossDomainPages = true;
-    // $.support.cors = true;
+    $.mobile.allowCrossDomainPages = true;
+    $.support.cors = true;
 
 });
 

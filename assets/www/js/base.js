@@ -14,11 +14,68 @@
  *
  ***********************************************************/
 
-var iBistuDB;
+var iBistuDB,collegeItemLength;
 var databaseExist = window.localStorage.getItem("databaseExist");
+var updateCollege = window.localStorage.getItem("updateCollege");
 
 console.log("database status--->" + databaseExist);
 
+/*
+ * create a ajax function to get the data frome server!
+ * then parse and return the responseText to json!
+ * */
+function getFromServer(type,url){
+    var xhr = new XMLHttpRequest();
+    var resp = null;
+    xhr.onreadystatechange = function(){
+        if(xhr.readyState == 4){
+            if((xhr.status >= 200 && xhr.status < 300)|| xhr.status == 304){
+                try{
+                    resp = JSON.parse(xhr.responseText);
+                    // collegeItemLength = resp.length;
+                    // for(var i = 0, len = resp.length; i < len; i++){
+                        // console.log("collegeName="+resp[i].collegeName + ",collegeCode=" + resp[i].collegeCode);
+                        // var temName = "collegeName" + i;
+                        // var temCode = "collegeCode" + i;
+                        // window.localStorage.setItem(temName,resp[i].collegeName);
+                        // window.localStorage.setItem(temCode,resp[i].collegeCode);
+                        // }
+                    switch(type){
+                        case "college": (function(){
+                            iBistuDB.transaction(function(tx){
+                                console.log("Transaction execute!");
+                                tx.executeSql('DROP TABLE IF EXISTS college');
+                                tx.executeSql('create table if not exists college (collegeName,collegeCode)')
+                                for(var i = 0, len = resp.length; i < len; i++){
+                                    tx.executeSql('insert into college (collegeName,collegeCode)' +
+                                ' values ("'+ resp[i].collegeName + '","' + resp[i].collegeCode +'")');
+                                }
+                            },
+                            errorCB,
+                            successCB);
+                        })();break;
+                        case "building": updateBuilding;break;
+                        
+                        
+                        default: noUpdate;
+                    }    
+                    
+                }catch(e){
+                    console.log("insert into college error!");
+                }
+            }
+            else {
+                console.log("Get data from server error" + xhr.status);
+            }
+        }
+    }
+    xhr.open("GET",url,true);
+    xhr.send(null);
+}
+
+/*
+ * database create!
+ * */
 (function onDeviceReady() {
     /*
      * 创建数据库，其中由Android源代码可知：
@@ -30,14 +87,20 @@ console.log("database status--->" + databaseExist);
         iBistuDB.transaction(populateDB, errorCB, successCB);
     }
     
-    if(iBistuDB != undefined){
+    if(iBistuDB == undefined){
         databaseExist = true;
         window.localStorage.setItem("databaseExist","true");
     }
     else {
         window.localStorage.setItem("databaseExit","false");
     }
-
+    //just for test & use funciotn insertCollegeNow!
+    if(updateCollege != null){
+        
+        iBistuDB.transaction(insertCollegeTable, errorCB, successCB);
+        window.localStorage.setItem("updateCollege","update");
+    }
+    
 })();
 
 var insertFlag = -1;
@@ -61,16 +124,19 @@ function populateDB(db) {
     db.executeSql('CREATE TABLE IF NOT EXISTS course (id unique, courseName,courseCode,courseTeacher,courseInfo,majorId)', [], createTableOrNot);
     db.executeSql('CREATE TABLE IF NOT EXISTS major (id unique, majorName,majorCode,collegeId)', [], createTableOrNot);
     db.executeSql('CREATE TABLE IF NOT EXISTS classtime (id unique, classroomId,date,courseId1,courseId2,courseId3,' + 'courseId4,courseId5,courseId6,courseId7,courseId8,courseId9,courseId10,courseId11)', [], createTableOrNot);
+    
+    
+    console.log("populateDB execute!");
 }
 
 // 当执行SQL失败后调用此方法
 function errorCB(error) {
-    console.log("executeSql error --- line 68");
+    console.log("executeSql error");
 }
 
 // 当执行SQL成功后调用此方法
 function successCB() {
-    console.log("executeSql success --- line 73");
+    console.log("executeSql success");
 }
 
 // var counter = 1;
@@ -84,40 +150,11 @@ function successCB() {
 // }
 
 //**************************************************************
-//This just use for test!!!!!!!!!!!!!
-var jsonButton = document.getElementById("jsonTest");
-jsonButton.addEventListener("click", parseJson, false);
-
-function parseJson() {
-    var jsonString = {
-        "name" : "Allen Heavey",
-        "age" : 21
-    };
-    var json = JSON.parse(jsonString);
-    alert(json.name + "--->" + json["age"] + "");
-
-}
-
-//**************************************************************
-//处理传过来的JSON数据(Table------>building)
-function getBuildingInfo(jsonBuilding) {
-
-    var building;
-
-    try {
-        building = JSON.parse(jsonBuilding);
-
-        return building;
-    } catch (e) {
-        console.log("Get building data error!");
-        return null;
-    }
-
-}
 
 function insertBuildingTable(tx) {
-
-    var building = getBuildingInfo();
+    
+    var url = "";
+    var building = getFromServer(url);
 
     if(building != null) {
         var buildingID = building["id"];
@@ -128,22 +165,7 @@ function insertBuildingTable(tx) {
     }
 }
 
-//处理传过来的JSON数据(Table------>classroom)
-function getClassroomInfo(jsonClassroom) {
-
-    var classroom;
-    try {
-        classroom = JSON.parse(jsonClassroom);
-        return classroom;
-    } catch (e) {
-        console.log("Get the classroom data failed!");
-        return null;
-    }
-}
-
 function insertClassroomTable(tx) {
-
-    var classroom = getClassroomInfo();
 
     if(classroom != null) {
         var roomID = classroom["id"];
@@ -151,54 +173,34 @@ function insertClassroomTable(tx) {
         var roomCode = classroom["roomCode"];
         var buidingID = classroom["buildingId"];
 
-        tx.executeSql("insert into classroom (id,roomName,roomCode,buildingId) values(" + "'" + roomID + "','" + roomName + "','" + roomCode + "','" + buildingID + "')");
-    }
-
-}
-
-//处理传过来的JSON数据(Table------>college)
-function getCollegeInfo(jsonCollege) {
-
-    var college;
-
-    try {
-        college = JSON.parse(jsonCollege);
-        return college;
-    } catch (e) {
-        console.log("Get college data failed!");
-        return null;
+        tx.executeSql("insert into classroom (id,roomName,roomCode,buildingId) values('" + roomID + "','" + roomName + "','" + roomCode + "','" + buildingID + "')");
     }
 }
 
 function insertCollegeTable(tx) {
-
-    var college = getCollegeInfo();
-
-    if(college != null) {
-        var collegeName = college["collegeName"];
-        var collegeCode = college["collegeCode"];
-
-        tx.executeSql("insert into college (collegeName,collegeCode) values (" + collegeName + "','" + collegeCode + "')");
-    }
-
-}
-
-//处理传过来的JSON数据(Table------>course)
-function getCourseInfo(jsonCourse) {
-
-    var course;
-
-    try {
-        course = JSON.parse(jsonCourse);
-        return course;
-    } catch (e) {
-        console.log("Get the course data failed!");
-        return null;
-    }
+    var url = "http://m.bistu.edu.cn/api/api.php?table=college&action=getcollegelist";
+    // var college = getFromServer(url);
+//     
+    // for(var i = 0, len = college.length; i < len; i++){
+        // console.log("name: "+college[i].collegeName);
+    // }
+//     
+    // console.log(typeof college);
+    
+    var type = "college";
+    getFromServer(type,url);
+    
+    // if(college != null) {
+        // var collegeName = college["collegeName"];
+        // var collegeCode = college["collegeCode"];
+// 
+        // tx.executeSql("insert into college (collegeName,collegeCode) values ('" + collegeName + "','" + collegeCode + "')");
+    // }
 }
 
 function insertCourseTable(tx) {
-    var course = getCourseInfo();
+    var url = "";
+    var course = getFromServer(url);
 
     if(course != null) {
         var courseID = course["id"];
@@ -212,24 +214,9 @@ function insertCourseTable(tx) {
     }
 }
 
-//处理传过来的JSON数据(Table------>major)
-function getMajorInfo(jsonMajor) {
-
-    var major;
-
-    try {
-        major = jsonMajor.parse(jsonMajor);
-        return major;
-    } catch (e) {
-        console.log("Get the major data failed!");
-        return null;
-    }
-
-}
-
 function insertMajorTable(tx) {
-
-    var major = getMajorInfo();
+    var url = "";
+    var major = getFromServer(url);
 
     if(major != null) {
         var majorID = major["id"];
@@ -241,23 +228,9 @@ function insertMajorTable(tx) {
     }
 }
 
-//处理传过来的JSON数据(Table------>classtime)
-function getClasstimeInfo(jsonClasstime) {
-
-    var classtime;
-
-    try {
-        classtime = JSON.parse(jsonClasstime);
-        return classtime;
-    } catch (e) {
-        console.log("Get classtime data failed!");
-        return null;
-    }
-}
-
 function insertClasstimeTable(tx) {
-
-    var classtime = getClasstimeInfo();
+    var url = "";
+    var classtime = getFromServer(url);
 
     if(classtime != null) {
         var classtimeID = classtime["id"];
