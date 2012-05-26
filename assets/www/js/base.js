@@ -56,6 +56,7 @@ function getFromServer(type,url){
                                 tx.executeSql('drop table if exists major');
                                 tx.executeSql('create table if not exists major (id INTEGER PRIMARY KEY, majorName,majorCode,collegeId)');
                                 for(var i = 0, len = resp.length; i < len; i++){
+                                    console.log("collegeID = " + resp[i].collegeID);
                                     tx.executeSql("insert into major (majorName,majorCode,collegeId) values ('" + resp[i].majorName + "','" + resp[i].majorCode + "','" + resp[i].collegeID + "')");
                                 }
                             },
@@ -126,7 +127,8 @@ function getFromServer(type,url){
     }
     
     //Update all tables if necessary!
-    if(updateAllTables != "updated"){
+    console.log("update all" + updateAllTables);
+    if(updateAllTables == "updated"){
         
         updateBuildingTable();
         updateClassroomTable();
