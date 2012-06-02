@@ -60,7 +60,7 @@ function getFromServer(type, url) {
                                     tx.executeSql('drop table if exists major');
                                     tx.executeSql('create table if not exists major (id INTEGER PRIMARY KEY, majorName,majorCode,collegeId)');
                                     for(var i = 0, len = resp.length; i < len; i++) {
-                                        tx.executeSql("insert into major (majorName,majorCode,collegeId) values ('" + resp[i].majorName + "','" + resp[i].majorCode + "','" + Number(resp[i].collegeId)+ "')");
+                                        tx.executeSql("insert into major (majorName,majorCode,collegeId) values ('" + resp[i].majorName + "','" + resp[i].majorCode + "','" + Number(resp[i].collegeId) + "')");
                                     }
                                     CANUPDATE = true;
                                 }, errorCB, successCB);
@@ -77,21 +77,31 @@ function getFromServer(type, url) {
                             break;
                         case "courseDetail":
                             (function() {
+                                iBistuDB.transaction(function(tx) {
+                                    tx.executeSql("drop table if exists coursedetail");
+                                    tx.executeSql("create table if not exists coursedetail (id INTEGER PRIMARY KEY,courseListId,courseTeacher,coursePlace,courseTime)");
+                                    console.log("start insert courseDetail --> lines:" + resp.length);
+                                    for(var i = 0, len = resp.length; i < len; i++) {
+                                        tx.executeSql('insert into coursedetail (courseListId,courseTeacher,coursePlace,courseTime) values ("' + resp[i].courseListId + '","' + resp[i].courseTeacher + '","' + resp[i].coursePlace + '","' + resp[i].courseTime + '")');
+                                    }
 
+                                }, errorCB, successCB);
                                 CANUPDATE = true;
                             })();
                             break;
                         case "courseList":
                             (function() {
-                                console.log("Start to insert courseList");
-                                tx.executeSql('drop table if exists courseList');
-                                console.log("drop courseList");
-                                tx.executeSql('create table if not exists courseList (id INTEGER PRIMARY KEY,courseCode,courseName,majorId)');
-                                console.log("create courseList");
-                                for(var i = 0, len = resp.length; i < len; i++) {
-                                    console.log("majorId-->" + resp[i].majorId);
-                                    tx.executeSql("insert into courseList (courseCode,courseName,majorId) values ('" + resp[i].courseCode + "','" + resp[i].courseName + "','" + resp[i].majorId + "')");
-                                }
+
+                                iBistuDB.transaction(function(tx) {
+
+                                    console.log("Start to insert courseList");
+                                    tx.executeSql('drop table if exists courseList');
+                                    tx.executeSql('create table if not exists courseList (id INTEGER PRIMARY KEY,courseCode,courseName,majorId)');
+                                    for(var i = 0, len = resp.length; i < len; i++) {
+                                        tx.executeSql("insert into courseList (id,courseCode,courseName,majorId) values ('" + resp[i].id + "','" + resp[i].courseCode + "','" + resp[i].courseName + "','" + resp[i].majorId + "')");
+                                    }
+
+                                }, errorCB, successCB);
 
                                 CANUPDATE = true;
 
@@ -99,6 +109,25 @@ function getFromServer(type, url) {
                             break;
                         case "course":
                             (function() {
+
+                                iBistuDB.transaction(function(tx) {
+                                    console.log("start to insert course table,line:" + resp.length);
+                                    tx.executeSql('drop table if exists course');
+                                    tx.executeSql('create table if not exists course (id INTEGER PRIMARY KEY,courseName,courseEngName,courseCode,courseInfo,courseXs,courseXf,courseXz,courseLb)');
+                                    
+                                    /*
+                                     * Here has a big problem!
+                                     * we can't insert table with 3 thousands items.
+                                     * This problem still don't solve!@2012/05/30
+                                     * */
+                                    for(var i = 0, len = resp.length; i < len; i++){
+                                        tx.executeSql("insert into course (courseName,courseEngName,courseCode,courseInfo,courseXs,courseXf,courseXz,courseLb) values ('" + resp[i].courseName + "','" + resp[i].courseEngName + "','" + resp[i].courseCode + "','" + resp[i].courseInfo + "','" + resp[i].courseXs + "','" + resp[i].courseXf + "','" + resp[i].courseXz + "','" + resp[i].courseLb +"')");
+                                        console.log("arrive-->" + i);
+                                    } 
+                                    
+                                }, function(){
+                                    console.log("insert into course error!!!");
+                                }, successCB);
 
                                 CANUPDATE = true;
 
@@ -131,7 +160,7 @@ function getFromServer(type, url) {
             } else {
                 console.log("Get data from server error " + xhr.status);
             }
-        } 
+        }
     }
     xhr.open("GET", url, true);
     xhr.send(null);
@@ -158,26 +187,23 @@ function getFromServer(type, url) {
         window.localStorage.setItem("databaseExit", "false");
     }
 
-    //Update all tables if necessary!
-    console.log("update all" + updateAllTables);
-    if(updateAllTables == "updated") {
-        updateCollegeTable();
-    }
-    
-    
 })();
 
 $(document).delegate("#home", "pageinit", function() {
+
+    //Update all tables if necessary!
+    console.log("update all" + updateAllTables);
+
     if(updateAllTables == "updated") {
 
         // updateBuildingTable();
         // updateClassroomTable();
         // updateClasstimeTable();
-        updateCollegeTable();
+        // updateCollegeTable();
         // updateCourseDetailTable();
-        updateCourseListTable();
+        // updateCourseListTable();
         // updateCourseTable();
-        updateMajorTable();
+        // updateMajorTable();
         window.localStorage.setItem("updateAllTables", "updated");
     }
 });
@@ -241,17 +267,17 @@ function updateBuildingTable() {
 }
 
 function updateCourseDetailTable() {
-    var url = "http://m.bistu.edu.cn/api/api.php?table=coursedetail&action=getcoursedetail";
+    var url = "http://mobile.bistu.edu.cn/api/api.php?table=coursedetail&action=getcoursedetail";
     var type = "courseDetail";
     getFromServer(type, url);
 }
 
 function updateCourseListTable() {
-    var url = "http://m.bistu.edu.cn/api/api.php?table=courselist&action=getcourselist";
+    var url = "http://mobile.bistu.edu.cn/api/api.php?table=courselist&action=getcourselist";
     var type = "courseList";
     console.log("courseListTable");
     getFromServer(type, url);
-    
+
 }
 
 function updateClassroomTable() {
@@ -264,10 +290,10 @@ function updateClassroomTable() {
 }
 
 function updateCollegeTable() {
-    var url = "http://m.bistu.edu.cn/api/api.php?table=college&action=getcollegelist";
+    var url = "http://mobile.bistu.edu.cn/api/api.php?table=college&action=getcollegelist";
     var type = "college";
     getFromServer(type, url);
-    
+
 }
 
 function updateCourseTable() {
@@ -279,7 +305,7 @@ function updateCourseTable() {
 }
 
 function updateMajorTable() {
-    var url = "http://m.bistu.edu.cn/api/api.php?table=major&action=getmajorlist";
+    var url = "http://mobile.bistu.edu.cn/api/api.php?table=major&action=getmajorlist";
     var type = "major";
     getFromServer(type, url);
 }
