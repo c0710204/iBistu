@@ -22,7 +22,7 @@ function getError(e) {
 }
 
 function getCollegeInformation(tx) {
-    tx.executeSql('select * from college limit 10', [], getSuccess, getError);
+    tx.executeSql('select * from college', [], getSuccess, getError);
 }
 
 (function() {
