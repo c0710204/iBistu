@@ -2,8 +2,9 @@
 (function() {
 
     var courseListQueryId = window.localStorage.getItem("courseListQueryId");
+    var majorName = window.localStorage.getItem("majorQueryCourse");
     var innerHTML = "";
-
+    console.log("QueryID-->"+courseListQueryId);
     if(iBistuDB != undefined) {
         iBistuDB.transaction(function(tx) {
             tx.executeSql("select * from courseList where majorId = " + "'" + courseListQueryId + "'", [], function(tx, results) {
@@ -13,7 +14,8 @@
                 for(var i = 0; i < r.length; i++) {
                     innerHTML += '<li><a href="coursedetail.html" id="' + r.item(i).id + '" value="'+r.item(i).courseCode+'">' + r.item(i).courseName + '</a></li>';
                 }
-
+                
+                $("#courseListCollege").text(majorName);
                 $("#courseList").html(innerHTML);
                 $("#courseList").listview('refresh');
                 

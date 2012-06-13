@@ -11,13 +11,24 @@
             var len = r.length, counter = 0;
             imgs.length = len;
             var year = now.getFullYear(), month = now.getMonth() + 1, day = now.getDate();
+            
+            if(month < 10){
+                month = '0' + month;
+            }
+            
+            if(day < 10){
+                day = '0' + day;
+            }
+            
             var dateQuery = year + "-" + month + "-" + day;
             console.log(dateQuery);
             var date = "2012-03-08";
-
+            
+            $("#currentDate_classroom").text(dateQuery);
+            
             for(var i = 0; i < len; i++) {
                 liHeader[i] = '<li><a href="#" id="' + r.item(i).id + '">' + r.item(i).roomName + '<div data-enhance="false">';
-                tx.executeSql('select * from classtime where classroomId = "' + r.item(i).id + '" and date = "' + date + '"', [], function(t, result) {
+                tx.executeSql('select * from classtime where classroomId = "' + r.item(i).id + '" and date = "' + dateQuery + '" ORDER BY classroomId ASC', [], function(t, result) {
 
                     var row = result.rows, images = "", l = row.length;
                     

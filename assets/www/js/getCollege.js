@@ -12,7 +12,9 @@ function getSuccess(tx, results) {
     $("li a").each(function(index) {
         $(this).click(function() {
             var queryID = $(this).attr("id");
+            var collegeName = $(this).text();
             window.localStorage.setItem("majorQueryId", queryID);
+            window.localStorage.setItem("collegeQueryMajor",collegeName);
         });
     });
 }
