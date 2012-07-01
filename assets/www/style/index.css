@@ -31,3 +31,30 @@
     text-align: center;
 }
 
+#map div label {
+    font-size: 14pt;
+}
+
+.font14pt {
+    font-size: 14pt;
+}
+
+.font17pt {
+    font-size: 17pt;
+}
+
+.fullAuto {
+    width: 100%;
+    height: auto;
+}
+
+.textCenter {
+    text-align: center;
+}
+
+
+
+
+
+
+
