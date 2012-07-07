@@ -52,7 +52,6 @@ function getFromServer(type, url) {
                     //xhr.responseText is a string!
                     //If you want to use JSON.parse,then there will be a problem!
                     resp = eval('(' + xhr.responseText + ')');
-                    ;
                     console.log("responseText's Type = " + type + " and length = " + resp.length);
                     // console.log(xhr.responseText);
                     switch(type) {
@@ -75,7 +74,7 @@ function getFromServer(type, url) {
                                     tx.executeSql('create table if not exists major (id INTEGER PRIMARY KEY, majorName,majorCode,collegeId)');
                                     console.log("Start to insert-->" + type);
                                     for(var i = 0, len = resp.length; i < len; i++) {
-                                        tx.executeSql("insert into major (majorName,majorCode,collegeId) values ('" + resp[i].majorName + "','" + resp[i].majorCode + "','" + Number(resp[i].collegeId) + "')");
+                                        tx.executeSql("insert into major (id,majorName,majorCode,collegeId) values ('" + resp[i].id + "','" + resp[i].majorName + "','" + resp[i].majorCode + "','" + Number(resp[i].collegeId) + "')");
                                     }
                                 }, errorCB, successCB);
                             })();
@@ -119,9 +118,8 @@ function getFromServer(type, url) {
                         case "course":
                             (function() {
                                 iBistuDB.transaction(function(tx) {
-                                    tx.executeSql('drop table if exists course');
-                                    tx.executeSql('create table if not exists course (id INTEGER PRIMARY KEY,courseName,courseEngName,courseCode,courseInfo,courseXs,courseXf,courseXz,courseLb)');
-                                    console.log("Start to insert-->" + type);
+                                    	tx.executeSql('create table if not exists course (id INTEGER PRIMARY KEY,courseName,courseEngName,courseCode,courseInfo,courseXs,courseXf,courseXz,courseLb)');
+                                    	console.log("Start to insert-->" + type + "  length = " + resp.length);
                                     /*
                                      * Here has a big problem!
                                      * we can't insert table with 3 thousands items.
@@ -203,23 +201,24 @@ function getFromServer(type, url) {
 
 })();
 
-$(document).delegate("#home", "pageinit", function() {
+(function() {
 
     //Update all tables if necessary!
-    console.log("update all" + updateAllTables);
+    console.log("update all-->" + updateAllTables);
 
-    if(updateAllTables != "updated") {
-        updateBuildingTable();
-        updateClassroomTable();
-        updateClasstimeTable();
-        updateCollegeTable();
-        updateCourseDetailTable();
-        updateCourseListTable();
-        updateCourseTable();
-        updateMajorTable();
+    if(updateAllTables == null) {
+    //    updateBuildingTableTable();
+    //    updateClassroomTable();
+    //    updateClasstimeTable();
+    //    updateCollegeTable();
+    //    updateCourseDetailTable();
+    //    updateCourseListTable();
+    //    updateCourseTable();
+    //    updateMajorTable();
         window.localStorage.setItem("updateAllTables", "updated");
+        console.log("updateAllTables is null!");
     }
-});
+})();
 
 var insertFlag = -1;
 
@@ -272,8 +271,8 @@ function successCB() {
 
 function updateBuildingTable() {
 
-    var url = "http://m.mybiti.com/api/api.php?table=building";
-    // var url = "http://mobile.bistu.edu.cn/api/api.php?table=building";
+    //var url = "http://m.mybiti.com/api/api.php?table=building";
+    var url = "http://m.bistu.edu.cn/api/api.php?table=building";
     var type = "building";
     Concurrent.Thread.create(getFromServer, type, url);
     // getFromServer(type, url);
@@ -281,7 +280,7 @@ function updateBuildingTable() {
 }
 
 function updateCourseDetailTable() {
-    var url = "http://m.mybiti.com/api/api.php?table=coursedetail";
+    var url = "http://m.bistu.edu.cn/api/api.php?table=coursedetail";
     // var url = "http://mobile.bistu.edu.cn/api/api.php?table=coursedetail";
     var type = "courseDetail";
     Concurrent.Thread.create(getFromServer, type, url);
@@ -289,7 +288,7 @@ function updateCourseDetailTable() {
 }
 
 function updateCourseListTable() {
-    var url = "http://m.mybiti.com/api/api.php?table=courselist";
+    var url = "http://m.bistu.edu.cn/api/api.php?table=courselist";
     // var url = "http://mobile.bistu.edu.cn/api/api.php?table=courselist";
     var type = "courseList";
     Concurrent.Thread.create(getFromServer, type, url);
@@ -300,7 +299,7 @@ function updateCourseListTable() {
 function updateClassroomTable() {
 
     // var url = "http://mobile.bistu.edu.cn/api/api.php?table=classroom";
-    var url = "http://m.mybiti.com/api/api.php?table=classroom";
+    var url = "http://m.bistu.edu.cn/api/api.php?table=classroom";
     var type = "classroom";
     Concurrent.Thread.create(getFromServer, type, url);
     // getFromServer(type, url);
@@ -308,16 +307,16 @@ function updateClassroomTable() {
 }
 
 function updateCollegeTable() {
-    var url = "http://m.mybiti.com/api/api.php?table=college";
+    var url = "http://m.bistu.edu.cn/api/api.php?table=college";
     // var url = "http://mobile.bistu.edu.cn/api/api.php?table=college";
     var type = "college";
-    Concurrent.Thread.create(getFromServer, type, url);
+    getFromServer(type, url);
     // getFromServer(type, url);
 
 }
 
 function updateCourseTable() {
-    var url = "http://m.mybiti.com/api/api.php?table=course";
+    var url = "http://m.bistu.edu.cn/api/api.php?table=course";
     // var url = "http://mobile.bistu.edu.cn/api/api.php?table=course";
     var type = "course";
     Concurrent.Thread.create(getFromServer, type, url);
@@ -326,7 +325,7 @@ function updateCourseTable() {
 }
 
 function updateMajorTable() {
-    var url = "http://m.mybiti.com/api/api.php?table=major";
+    var url = "http://m.bistu.edu.cn/api/api.php?table=major";
     // var url = "http://mobile.bistu.edu.cn/api/api.php?table=major";
     var type = "major";
     Concurrent.Thread.create(getFromServer, type, url);
@@ -334,7 +333,7 @@ function updateMajorTable() {
 }
 
 function updateClasstimeTable() {
-    var url = "http://m.mybiti.com/api/api.php?table=classtime";
+    var url = "http://m.bistu.edu.cn/api/api.php?table=classtime";
     // var url = "http://mobile.bistu.edu.cn/api/api.php?table=classtime";
     var type = "classtime";
 

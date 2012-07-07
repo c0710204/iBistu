@@ -1,6 +1,6 @@
-// commit ac0a3990438f4a89faa993316fb5614f61cf3be6
+// commit 5647225e12e18e15aefc33b151430d9a3804d9ea
 
-// File generated at :: Tue Jun 05 2012 14:14:16 GMT-0700 (PDT)
+// File generated at :: Fri Jun 29 2012 12:32:24 GMT-0400 (EDT)
 
 /*
  Licensed to the Apache Software Foundation (ASF) under one
@@ -190,7 +190,9 @@ var cordova = {
     fireDocumentEvent: function(type, data) {
         var evt = createEvent(type, data);
         if (typeof documentEventHandlers[type] != 'undefined') {
-            documentEventHandlers[type].fire(evt);
+            setTimeout(function() {
+                documentEventHandlers[type].fire(evt);
+            }, 0);
         } else {
             document.dispatchEvent(evt);
         }
@@ -198,7 +200,9 @@ var cordova = {
     fireWindowEvent: function(type, data) {
         var evt = createEvent(type,data);
         if (typeof windowEventHandlers[type] != 'undefined') {
-            windowEventHandlers[type].fire(evt);
+            setTimeout(function() {
+                windowEventHandlers[type].fire(evt);
+            }, 0);
         } else {
             window.dispatchEvent(evt);
         }
@@ -953,8 +957,7 @@ module.exports = function(success, fail, service, action, args) {
 
     // If a result was returned
     if (r.length > 0) {
-        var v;
-        eval("v="+r+";");
+        var v = JSON.parse(r);
 
         // If status is OK, then return value back to caller
         if (v.status === cordova.callbackStatus.OK) {
@@ -1282,6 +1285,10 @@ cameraExport.getPicture = function(successCallback, errorCallback, options) {
     }
 
     exec(successCallback, errorCallback, "Camera", "takePicture", [quality, destinationType, sourceType, targetWidth, targetHeight, encodingType, mediaType, allowEdit, correctOrientation, saveToPhotoAlbum, popoverOptions]);
+};
+
+cameraExport.cleanup = function(successCallback, errorCallback) {
+    exec(successCallback, errorCallback, "Camera", "cleanup", []);
 };
 
 module.exports = cameraExport;
@@ -2591,6 +2598,8 @@ var DirectoryEntry = require('cordova/plugin/DirectoryEntry');
 var FileSystem = function(name, root) {
     this.name = name || null;
     if (root) {
+        console.log('root.name ' + name);
+        console.log('root.root ' + root);
         this.root = new DirectoryEntry(root.name, root.fullPath);
     }
 };
@@ -2600,7 +2609,8 @@ module.exports = FileSystem;
 
 // file: lib/common/plugin/FileTransfer.js
 define("cordova/plugin/FileTransfer", function(require, exports, module) {
-var exec = require('cordova/exec');
+var exec = require('cordova/exec'),
+    FileTransferError = require('cordova/plugin/FileTransferError');
 
 /**
  * FileTransfer uploads a file to a remote server.
@@ -2619,6 +2629,8 @@ var FileTransfer = function() {};
 * @param trustAllHosts {Boolean} Optional trust all hosts (e.g. for self-signed certs), defaults to false
 */
 FileTransfer.prototype.upload = function(filePath, server, successCallback, errorCallback, options, trustAllHosts) {
+    // sanity parameter checking
+    if (!filePath || !server) throw new Error("FileTransfer.upload requires filePath and server URL parameters at the minimum.");
     // check for options
     var fileKey = null;
     var fileName = null;
@@ -2640,7 +2652,12 @@ FileTransfer.prototype.upload = function(filePath, server, successCallback, erro
         }
     }
 
-    exec(successCallback, errorCallback, 'FileTransfer', 'upload', [filePath, server, fileKey, fileName, mimeType, params, trustAllHosts, chunkedMode]);
+    var fail = function(e) {
+        var error = new FileTransferError(e.code, e.source, e.target, e.http_status);
+        errorCallback(error);
+    };
+
+    exec(successCallback, fail, 'FileTransfer', 'upload', [filePath, server, fileKey, fileName, mimeType, params, trustAllHosts, chunkedMode]);
 };
 
 /**
@@ -2651,6 +2668,8 @@ FileTransfer.prototype.upload = function(filePath, server, successCallback, erro
  * @param errorCallback {Function}    Callback to be invoked upon error
  */
 FileTransfer.prototype.download = function(source, target, successCallback, errorCallback) {
+    // sanity parameter checking
+    if (!source || !target) throw new Error("FileTransfer.download requires source URI and target URI parameters at the minimum.");
     var win = function(result) {
         var entry = null;
         if (result.isDirectory) {
@@ -2665,6 +2684,12 @@ FileTransfer.prototype.download = function(source, target, successCallback, erro
         entry.fullPath = result.fullPath;
         successCallback(entry);
     };
+
+    var fail = function(e) {
+        var error = new FileTransferError(e.code, e.source, e.target, e.http_status);
+        errorCallback(error);
+    };
+
     exec(win, errorCallback, 'FileTransfer', 'download', [source, target]);
 };
 
@@ -2678,8 +2703,11 @@ define("cordova/plugin/FileTransferError", function(require, exports, module) {
  * FileTransferError
  * @constructor
  */
-var FileTransferError = function(code) {
+var FileTransferError = function(code, source, target, status) {
     this.code = code || null;
+    this.source = source || null;
+    this.target = target || null;
+    this.http_status = status || null;
 };
 
 FileTransferError.FILE_NOT_FOUND_ERR = 1;
@@ -2687,6 +2715,7 @@ FileTransferError.INVALID_URL_ERR = 2;
 FileTransferError.CONNECTION_ERR = 3;
 
 module.exports = FileTransferError;
+
 });
 
 // file: lib/common/plugin/FileUploadOptions.js
@@ -5466,6 +5495,9 @@ define("cordova/plugin/splashscreen", function(require, exports, module) {
 var exec = require('cordova/exec');
 
 var splashscreen = {
+    show:function() {
+        exec(null, null, "SplashScreen", "show", []);
+    },
     hide:function() {
         exec(null, null, "SplashScreen", "hide", []);
     }

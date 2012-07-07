@@ -14,7 +14,7 @@ function getMajorList(tx) {
         var innerHTML = "";
 
         for(var i = 0; i < len; i++) {
-            innerHTML += '<li data-role="list-divider"><a href="courselist.html" id="' + row.item(i).majorCode + '">' + row.item(i).majorName + '</a></li>';
+            innerHTML += '<li data-role="list-divider"><a href="courselist.html" id="' + row.item(i).id + '">' + row.item(i).majorName + '</a></li>';
         }
         $("#collegeNameInMajor").text(collegeName);
         $("#majorList").html(innerHTML);
@@ -23,6 +23,7 @@ function getMajorList(tx) {
         $("#majorList a").each(function(index) {
             $(this).click(function() {
                 var queryID = $(this).attr("id");
+                console.log("majorid-->" + queryID)
                 var majorName = $(this).text();
                 window.localStorage.setItem("courseListQueryId", queryID);
                 window.localStorage.setItem("majorQueryCourse",majorName);
@@ -35,7 +36,7 @@ function getMajorList(tx) {
 
 (function() {
 
-    if(iBistuDB != undefined) {
+    if(iBistuDB != null) {
         iBistuDB.transaction(getMajorList, errorCB, successCB);
     }
 

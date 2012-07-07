@@ -20,7 +20,7 @@ function getSuccess(tx, results) {
 }
 
 function getError(e) {
-    console.log(e.code);
+    console.log("has an error!");
 }
 
 function getCollegeInformation(tx) {
