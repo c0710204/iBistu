@@ -26,8 +26,9 @@
 var iBistuDB, collegeItemLength;
 var databaseExist = window.localStorage.getItem("databaseExist");
 var updateAllTables = window.localStorage.getItem("updateAllTables");
-var CANUPDATE = true;
-var BASICAL_URL = "";
+var CANUPDATE = true,
+	BASICAL_URL = "",
+	networkState = navigator.network.connection.type; 
 console.log("database status--->" + databaseExist);
 
 /*
@@ -126,7 +127,7 @@ function getFromServer(type, url) {
                                      * This problem still don't solve!@2012/05/30
                                      * */
                                     for(var i = 0, len = resp.length; i < len; i++) {
-                                        tx.executeSql("insert into course (courseName,courseEngName,courseCode,courseInfo,courseXs,courseXf,courseXz,courseLb) values ('" + resp[i].courseName + "','" + resp[i].courseEngName + "','" + resp[i].courseCode + "','" + resp[i].courseInfo + "','" + resp[i].courseXs + "','" + resp[i].courseXf + "','" + resp[i].courseXz + "','" + resp[i].courseLb + "')");
+                                        tx.executeSql("insert into course (courseName,courseEngName,courseCode,courseInfo,courseXs,courseXf,courseXz,courseLb) values ('" + resp[i].courseName + "','" + resp[i].courseEngName + "','" + resp[i].courseCode + "','" + resp[i].courseInfo.replace(/[ ]/g,"") + "','" + resp[i].courseXs + "','" + resp[i].courseXf + "','" + resp[i].courseXz + "','" + resp[i].courseLb + "')");
                                     }
 
                                 }, function() {
@@ -205,18 +206,26 @@ function getFromServer(type, url) {
 
     //Update all tables if necessary!
     console.log("update all-->" + updateAllTables);
-
-    if(updateAllTables == null) {
+	
+	if(networkState == Connection.NONE){
+		console.log("No network connect!");
+		updateAllTables = null;
+	}
+	else{
+		console.log("connection is very well");
+	}
+	
+    if(updateAllTables != null) {
     //    updateBuildingTableTable();
     //    updateClassroomTable();
     //    updateClasstimeTable();
     //    updateCollegeTable();
     //    updateCourseDetailTable();
     //    updateCourseListTable();
-    //    updateCourseTable();
+        updateCourseTable();
     //    updateMajorTable();
         window.localStorage.setItem("updateAllTables", "updated");
-        console.log("updateAllTables is null!");
+        console.log("updateAllTables is not null!");
     }
 })();
 
