@@ -1,0 +1,33 @@
+<!DOCTYPE HTML>
+<html lang="en-US">
+    <head>
+        <meta charset="UTF-8">
+        <title>newsList</title>
+    </head>
+    <body>
+        <div data-role="page" id="newsList" data-title="newsList">
+            <div data-role="header" data-position="fixed" data-theme="b">
+                <a href="index.html" data-icon="arrow-l" data-mini="true">首页</a><h1>新闻</h1>
+            </div>
+            <form action="#" method="post">
+                <div data-role="fieldcontain" style="background-color:#888;margin:0px 0px -1px 0px;padding:3px;">
+                    <input type="search" name="search" id="searc-basic" value=""  placeholder="搜索新闻..." data-mini="true"/>
+                </div>
+            </form>
+            <script type="text/javascript" src="js/getNewsList.js"></script>
+            <div data-role="content"  data-theme="c">
+                <ul data-role="listview" id="newsListContent" class="ui-listview ui-shadow">
+                    <li>
+                        <a href="newsdetail.html">***“2011全国高校辅导员年度人物”评选结果出炉，我校..</a>
+                        <p> 2012/04/28 </p>
+                    </li>
+                    <li>
+                        <a href="#">我校首次获得市级职工创新工作室称号</a>
+                        <p> 2012/04/28 </p>
+                    </li>
+                </ul>
+            </div>
+            <!-- /content -->
+        </div>
+    </body>
+</html>
