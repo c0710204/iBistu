@@ -19,17 +19,41 @@
  * course table seems has error!
  * I will fix it tomorrow!
  * 2012/06/09
- * 
- * 
+ *
+ *
  *  */
 
 var iBistuDB, collegeItemLength;
 var databaseExist = window.localStorage.getItem("databaseExist");
 var updateAllTables = window.localStorage.getItem("updateAllTables");
-var CANUPDATE = true,
-	BASICAL_URL = "",
-	networkState = navigator.network.connection.type; 
+var CANUPDATE = true, BASICAL_URL = "", networkState,NETWORK_READY = false;
+
 console.log("database status--->" + databaseExist);
+
+var Bistu = {
+    createNew:function(){
+        
+    },
+    getNetworkState: function(){
+        
+    },
+    latestUpdate:function(time){
+        
+    },
+    loginStatus:function(){
+        var loginOrNot = window.localStorage.getItem("loginStatus");
+        
+        if(loginOrNot == null || loginOrNot == undefined){
+            return false;
+        }
+        else if(loginOrNot == "true"){
+            return true;
+        }
+        
+        return false;
+    }
+};
+
 
 /*
  * create a ajax function to get the data frome server!
@@ -40,7 +64,6 @@ function getFromServer(type, url) {
     if(url == "" || url == null) {
         return;
     }
-    CANUPDATE = false;
 
     console.log("type=" + type + "-->url=" + url);
 
@@ -60,7 +83,7 @@ function getFromServer(type, url) {
                             (function() {
                                 iBistuDB.transaction(function(tx) {
                                     tx.executeSql('DROP TABLE IF EXISTS college');
-                                    tx.executeSql('create table if not exists college (id INTEGER PRIMARY KEY,collegeName,collegeCode)')
+                                    tx.executeSql('create table if not exists college (id INTEGER PRIMARY KEY,collegeName,collegeCode)');
                                     console.log("Start to insert-->" + type);
                                     for(var i = 0, len = resp.length; i < len; i++) {
                                         tx.executeSql('insert into college (collegeName,collegeCode)' + ' values ("' + resp[i].collegeName + '","' + resp[i].collegeCode + '")');
@@ -119,15 +142,16 @@ function getFromServer(type, url) {
                         case "course":
                             (function() {
                                 iBistuDB.transaction(function(tx) {
-                                    	tx.executeSql('create table if not exists course (id INTEGER PRIMARY KEY,courseName,courseEngName,courseCode,courseInfo,courseXs,courseXf,courseXz,courseLb)');
-                                    	console.log("Start to insert-->" + type + "  length = " + resp.length);
+                                    tx.executeSql('create table if not exists course (id INTEGER PRIMARY KEY,courseName,courseEngName,courseCode,courseInfo,courseXs,courseXf,courseXz,courseLb)');
+                                    console.log("Start to insert-->" + type + "  length = " + resp.length);
                                     /*
                                      * Here has a big problem!
-                                     * we can't insert table with 3 thousands items.
+                                     * we can't insert table with 3 thousands
+                                     * items.
                                      * This problem still don't solve!@2012/05/30
                                      * */
                                     for(var i = 0, len = resp.length; i < len; i++) {
-                                        tx.executeSql("insert into course (courseName,courseEngName,courseCode,courseInfo,courseXs,courseXf,courseXz,courseLb) values ('" + resp[i].courseName + "','" + resp[i].courseEngName + "','" + resp[i].courseCode + "','" + resp[i].courseInfo.replace(/[ ]/g,"") + "','" + resp[i].courseXs + "','" + resp[i].courseXf + "','" + resp[i].courseXz + "','" + resp[i].courseLb + "')");
+                                        tx.executeSql("insert into course (courseName,courseEngName,courseCode,courseInfo,courseXs,courseXf,courseXz,courseLb) values ('" + resp[i].courseName + "','" + resp[i].courseEngName + "','" + resp[i].courseCode + "','" + resp[i].courseInfo.replace(/[ ]/g, "") + "','" + resp[i].courseXs + "','" + resp[i].courseXf + "','" + resp[i].courseXz + "','" + resp[i].courseLb + "')");
                                     }
 
                                 }, function() {
@@ -167,10 +191,12 @@ function getFromServer(type, url) {
                             })();
                     }
 
-                } catch(e) {
+                }
+                catch(e) {
                     console.log("insert into Table error-->" + type + "-- Type-->" + e.name);
                 }
-            } else {
+            }
+            else {
                 console.log("Get data from server error code = " + xhr.status);
             }
         }
@@ -179,10 +205,23 @@ function getFromServer(type, url) {
     xhr.send(null);
 }
 
+document.addEventListener("deviceready", onDeviceReady, false);
+
+function checkConnection() {
+    networkState = navigator.network.connection.type;
+    console.log("networkstate is " + networkState);
+    console.log("network's on " + navigator.platform);
+    NETWORK_READY = true;
+}
+
+function onDeviceReady() {
+    checkConnection();
+}
+
 /*
  * create database or open the database;
  * */
-(function onDeviceReady() {
+(function() {
     /*
      * 创建数据库，其中由Android源代码可知：
      * 仅有第一个参数有效果，其它参数现在无效。
@@ -196,7 +235,8 @@ function getFromServer(type, url) {
     if(iBistuDB != undefined) {
         databaseExist = true;
         window.localStorage.setItem("databaseExist", "true");
-    } else {
+    }
+    else {
         window.localStorage.setItem("databaseExit", "false");
     }
 
@@ -206,24 +246,25 @@ function getFromServer(type, url) {
 
     //Update all tables if necessary!
     console.log("update all-->" + updateAllTables);
-	
-	if(networkState == Connection.NONE){
-		console.log("No network connect!");
-		updateAllTables = null;
-	}
-	else{
-		console.log("connection is very well");
-	}
-	
+    if(NETWORK_READY) {
+        if(networkState == Connection.NONE){
+            console.log("No network connect!");
+            updateAllTables = null;
+        }
+    }
+    else {
+        console.log("connection is not ready");
+    }
+
     if(updateAllTables != null) {
-    //    updateBuildingTableTable();
-    //    updateClassroomTable();
-    //    updateClasstimeTable();
-    //    updateCollegeTable();
-    //    updateCourseDetailTable();
-    //    updateCourseListTable();
-        updateCourseTable();
-    //    updateMajorTable();
+        //    updateBuildingTableTable();
+        //    updateClassroomTable();
+        //    updateClasstimeTable();
+        //    updateCollegeTable();
+        //    updateCourseDetailTable();
+        //    updateCourseListTable();
+        // updateCourseTable();
+        //    updateMajorTable();
         window.localStorage.setItem("updateAllTables", "updated");
         console.log("updateAllTables is not null!");
     }
@@ -234,7 +275,8 @@ var insertFlag = -1;
 function createTableOrNot(tx, results) {
     if(results.rowsAffected == 0) {
         insertFlag = 0;
-    } else {
+    }
+    else {
         insertFlag = 1;
     }
     console.log("createTable flag--->" + insertFlag);
@@ -270,9 +312,11 @@ function successCB() {
 //
 // //'INSERT INTO iBistu (id, data) VALUES (2, "Second row")'
 // function executeAddSql(db) {
-// //这里有一处调试了很久的BUG------> "+ "'"+ inputString + "'" +" <-----------必须形如这样的才能被添加进数据库
+// //这里有一处调试了很久的BUG------> "+ "'"+ inputString + "'" +"
+// <-----------必须形如这样的才能被添加进数据库
 // //即须加单引号.经网上查询得，如果不加引号或空格，将会把逗号与字符串等看成一个字符串。
-// db.executeSql("INSERT INTO iBistu (id, data) VALUES (" + counter + ",'" + inputString + "')");
+// db.executeSql("INSERT INTO iBistu (id, data) VALUES (" + counter + ",'" +
+// inputString + "')");
 // counter++;
 // }
 
@@ -375,7 +419,8 @@ function updateClasstimeTable() {
 // var respons = myXML.responseText;
 // var jsonText = JSON.parse(respons);
 //
-// log.innerHTML = "<p>" + jsonText[0].id + "-->" + jsonText[0].introName + "</p>";
+// log.innerHTML = "<p>" + jsonText[0].id + "-->" + jsonText[0].introName +
+// "</p>";
 //
 // }
 // }
