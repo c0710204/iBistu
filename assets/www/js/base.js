@@ -35,7 +35,7 @@ var Bistu = {
         
     },
     getNetworkState: function(){
-        
+        return NETWORK_READY;
     },
     latestUpdate:function(time){
         
@@ -51,6 +51,18 @@ var Bistu = {
         }
         
         return false;
+    },
+    loginToken:function(){
+    		
+    		var token = window.localStorage.getItem("loginToken");
+    		
+    		if(token != null && token != "undefined"){
+    			return token;
+    		}
+    		else{
+    			return null;
+    		}
+    		
     }
 };
 
@@ -62,7 +74,7 @@ var Bistu = {
 function getFromServer(type, url) {
     //If url is null,then return;
     if(url == "" || url == null) {
-        return;
+        return null;
     }
 
     console.log("type=" + type + "-->url=" + url);
@@ -211,7 +223,14 @@ function checkConnection() {
     networkState = navigator.network.connection.type;
     console.log("networkstate is " + networkState);
     console.log("network's on " + navigator.platform);
-    NETWORK_READY = true;
+    
+    if(networkState != "none"){
+    		NETWORK_READY = true;
+    }
+    else{
+    		NETWORK_READY = false;
+    }
+    
 }
 
 function onDeviceReady() {

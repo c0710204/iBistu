@@ -27,6 +27,7 @@ var loginFlag;
 					}
 					else if(type == "flag"){
 						loginFlag = xhr.responseText;
+						window.localStorage.setItem("loginToken",loginFlag);
 					}
 					console.log(xhr.responseText);
 				}
@@ -35,7 +36,6 @@ var loginFlag;
 		xhr.open("GET",url,true);
 		xhr.send(null);
 	}
-	
 	
 	function getPubKey(url){
 		loginAjax(url,"key");
@@ -63,6 +63,12 @@ var loginFlag;
 		console.log("password-->" + passwd);
 		console.log("username-->" + usercode);
 		getLoginFlag();
+		// window.location.href = "index.html";
+	});
+	
+	$("#logoutButton").click(function(){
+		window.localStorage.removeItem("loginToken");
+		window.location.href = "index.html";
 	});
 	
 })();

@@ -15,19 +15,26 @@
 			<div data-role="header" data-position="fixed" data-theme="b">
 				<a href="index.html" data-icon="home">首页</a><h1>概况</h1>
 			</div>
-			<div data-role="content">
-				<div class="" data-role="fieldcontain">
-					<label for="usercode">Usercode:</label>
-					<input type="text" id="loginCode" placeholder="usercode"/>
+			
+			<div data-role="content" class="show">
+				<div id="loginForm">
+					<div class="" data-role="fieldcontain">
+						<label for="usercode">Usercode:</label>
+						<input type="text" id="loginCode" placeholder="usercode"/>
+					</div>
+					<div class="">
+						<label for="password">password:</label>
+						<input type="password" id="loginPassword"/>
+					</div>
+					<div>
+						<input type="button" value="submit" id="loginSubmit" />
+					</div>
 				</div>
-				<div class="">
-					<label for="password">password:</label>
-					<input type="password" id="loginPassword"/>
-				</div>
-				<div>
-					<input type="button" value="submit" id="loginSubmit" />
+				<div id="logoutForm">
+					<input type="button" value="Exit" id="logoutButton" />
 				</div>
 			</div>
+			<script type="text/javascript" src="js/loginToken.js"></script>
 			<script type="text/javascript" src="js/login.js"></script>
 		</div>
 		
