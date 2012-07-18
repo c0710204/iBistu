@@ -35,7 +35,7 @@ var Bistu = {
         
     },
     getNetworkState: function(){
-        
+        return NETWORK_READY;
     },
     latestUpdate:function(time){
         
@@ -51,6 +51,18 @@ var Bistu = {
         }
         
         return false;
+    },
+    loginToken:function(){
+    		
+    		var token = window.localStorage.getItem("loginToken");
+    		
+    		if(token != null && token != "undefined"){
+    			return token;
+    		}
+    		else{
+    			return null;
+    		}
+    		
     }
 };
 
@@ -62,7 +74,7 @@ var Bistu = {
 function getFromServer(type, url) {
     //If url is null,then return;
     if(url == "" || url == null) {
-        return;
+        return null;
     }
 
     console.log("type=" + type + "-->url=" + url);
@@ -83,7 +95,7 @@ function getFromServer(type, url) {
                             (function() {
                                 iBistuDB.transaction(function(tx) {
                                     tx.executeSql('DROP TABLE IF EXISTS college');
-                                    tx.executeSql('create table if not exists college (id INTEGER PRIMARY KEY,collegeName,collegeCode)')
+                                    tx.executeSql('create table if not exists college (id INTEGER PRIMARY KEY,collegeName,collegeCode)');
                                     console.log("Start to insert-->" + type);
                                     for(var i = 0, len = resp.length; i < len; i++) {
                                         tx.executeSql('insert into college (collegeName,collegeCode)' + ' values ("' + resp[i].collegeName + '","' + resp[i].collegeCode + '")');
@@ -211,7 +223,14 @@ function checkConnection() {
     networkState = navigator.network.connection.type;
     console.log("networkstate is " + networkState);
     console.log("network's on " + navigator.platform);
-    NETWORK_READY = true;
+    
+    if(networkState != "none"){
+    		NETWORK_READY = true;
+    }
+    else{
+    		NETWORK_READY = false;
+    }
+    
 }
 
 function onDeviceReady() {

@@ -52,9 +52,17 @@
     text-align: center;
 }
 
+.clearfix {
+	clear:both;
+}
 
+.hidden {
+	display:none;
+}
 
-
+.show {
+	display: block;
+}
 
 
 
