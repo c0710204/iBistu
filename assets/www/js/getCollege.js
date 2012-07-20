@@ -8,7 +8,18 @@ function getSuccess(tx, results) {
     }
     $("#mainContent4course").html(innerHTML);
     $("#mainContent4course").listview('refresh');
-
+    
+    networkState = navigator.network.connection.type;
+    
+    if(networkState != "none"){
+        updateMajorTable();
+    }
+    else{
+        console.log("network is error!");
+    }
+    
+    
+    
     $("li a").each(function(index) {
         $(this).click(function() {
             var queryID = $(this).attr("id");

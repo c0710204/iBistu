@@ -1,32 +1,51 @@
 <!DOCTYPE HTML>
 <html lang="en-US">
-<head>
-	<meta charset="UTF-8">
-	<title></title>
-</head>
-<body>
-	<div data-role="page" id="coursedetail" data-title="coursedetail">
-    <script type="text/javascript" src="js/getCourseDetail.js"></script>
-    <div data-role="header" data-position="fixed" data-theme="b">
-    <a data-rel="back" data-icon="arrow-l" data-mini="true">返回</a>
-    <h1>课程信息</h1><a href="index.html" data-icon="home" data-mini="true">首页</a>
-    
-    </div>
-    
-    <div data-role="content"  data-theme="c">
-        <h4 id="detail_courseName"></h4>
-        <p id="detail_courseInfo"></p>
-        <ul data-role="listview" data-inset="true" 
-        class="ui-listview ui-listview-inset ui-corner-all ui-shadow">
-            <li><a href="#" id="courseDetailTeacher">教师:李宁</a></li>
-            <li><a href="#" id="courseDetailClassroom">教室***:健翔桥校区第3阶梯教室</a></li>
-            <li><a href="#" id="courseDetailTime">时间:周三下午1:00-3:00</a></li>
-            <li><a href="#" id="courseDetailClassType">课程类型:讲课和实验</a></li>
-            <li><a href="#">课时:100</a></li>
-            <li><a href="#">学分:3</a></li>
-        </ul>
-    </div>
-    
-    </div>
-</body>
+    <head>
+        <meta charset="UTF-8">
+        <title></title>
+    </head>
+    <body>
+        <div data-role="page" id="coursedetail" data-title="coursedetail">
+            <script type="text/javascript" src="js/getCourseDetail.js"></script>
+            <div data-role="header" data-position="fixed" data-theme="b">
+                <a data-rel="back" data-icon="arrow-l" data-mini="true">返回</a>
+                <h1>课程信息</h1><a href="index.html" data-icon="home" data-mini="true">首页</a>
+            </div>
+
+            <div data-role="content"  data-theme="c">
+                <h1 id="detail_courseName"></h1>
+                <p id="detail_courseInfo"></p>
+                <div>
+                    <span id="courseDetailPeriod">学时:100</span>&nbsp;&nbsp;&nbsp;&nbsp;<span id="courseDetailClassScore">学分:3</span>
+                </div>
+                <div>
+                    <span id="courseDetailClassType">课程类型:讲课和实验</span>
+                </div>
+                <div id="courseDetailListView">
+                    <ul data-role="listview" data-inset="true" class="ui-listview ui-listview-inset ui-corner-all ui-shadow">
+                        <li>
+                            <a href="#" id="courseDetailTeacher">教师:李宁</a>
+                        </li>
+                        <li>
+                            <a href="#" id="courseDetailClassroom">教室***:健翔桥校区第3阶梯教室</a>
+                        </li>
+                        <li>
+                            <a href="#" id="courseDetailTime">时间:周三下午1:00-3:00</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div data-role="footer" data-position="fixed" data-theme="c">
+                <div data-role="navbar" data-iconpos="right">
+                    <ul>
+                        <li></li>
+                        <li></li>
+                        <li>
+                            <a href="#" id="addMyFavor" data-mini="true" data-icon="plus">收藏</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </body>
 </html>

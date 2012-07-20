@@ -28,8 +28,6 @@ var databaseExist = window.localStorage.getItem("databaseExist");
 var updateAllTables = window.localStorage.getItem("updateAllTables");
 var CANUPDATE = true, BASICAL_URL = "", networkState,NETWORK_READY = false;
 
-console.log("database status--->" + databaseExist);
-
 var Bistu = {
     createNew:function(){
         
@@ -55,14 +53,12 @@ var Bistu = {
     loginToken:function(){
     		
     		var token = window.localStorage.getItem("loginToken");
-    		
     		if(token != null && token != "undefined"){
     			return token;
     		}
     		else{
     			return null;
     		}
-    		
     }
 };
 
@@ -162,8 +158,10 @@ function getFromServer(type, url) {
                                      * items.
                                      * This problem still don't solve!@2012/05/30
                                      * */
+                                    var courseInfos = "";
                                     for(var i = 0, len = resp.length; i < len; i++) {
-                                        tx.executeSql("insert into course (courseName,courseEngName,courseCode,courseInfo,courseXs,courseXf,courseXz,courseLb) values ('" + resp[i].courseName + "','" + resp[i].courseEngName + "','" + resp[i].courseCode + "','" + resp[i].courseInfo.replace(/[ ]/g, "") + "','" + resp[i].courseXs + "','" + resp[i].courseXf + "','" + resp[i].courseXz + "','" + resp[i].courseLb + "')");
+                                        courseInfos = resp[i].courseInfo.replace(/\n[\s| ]*\r/g, "");
+                                        tx.executeSql("insert into course (courseName,courseEngName,courseCode,courseInfo,courseXs,courseXf,courseXz,courseLb) values ('" + resp[i].courseName + "','" + resp[i].courseEngName + "','" + resp[i].courseCode + "','" + courseInfos + "','" + resp[i].courseXs + "','" + resp[i].courseXf + "','" + resp[i].courseXz + "','" + resp[i].courseLb + "')");
                                     }
 
                                 }, function() {
@@ -193,7 +191,6 @@ function getFromServer(type, url) {
                                     for(var i = 0, len = resp.length; i < len; i++) {
                                         tx.executeSql('insert into classroom (id,roomName,roomCode,buildingId) values ("' + resp[i].id + '","' + resp[i].roomName + '","' + resp[i].roomCode + '","' + resp[i].buildingId + '")');
                                     }
-
                                 }, errorCB, successCB);
                             })();
                             break;
@@ -217,7 +214,7 @@ function getFromServer(type, url) {
     xhr.send(null);
 }
 
-document.addEventListener("deviceready", onDeviceReady, false);
+document.addEventListener("deviceready", onDeviceReadyNow, false);
 
 function checkConnection() {
     networkState = navigator.network.connection.type;
@@ -226,6 +223,8 @@ function checkConnection() {
     
     if(networkState != "none"){
     		NETWORK_READY = true;
+    		updateCollegeTable();
+    		updateBuildingTable();
     }
     else{
     		NETWORK_READY = false;
@@ -233,7 +232,7 @@ function checkConnection() {
     
 }
 
-function onDeviceReady() {
+function onDeviceReadyNow() {
     checkConnection();
 }
 
@@ -261,34 +260,6 @@ function onDeviceReady() {
 
 })();
 
-(function() {
-
-    //Update all tables if necessary!
-    console.log("update all-->" + updateAllTables);
-    if(NETWORK_READY) {
-        if(networkState == Connection.NONE){
-            console.log("No network connect!");
-            updateAllTables = null;
-        }
-    }
-    else {
-        console.log("connection is not ready");
-    }
-
-    if(updateAllTables != null) {
-        //    updateBuildingTableTable();
-        //    updateClassroomTable();
-        //    updateClasstimeTable();
-        //    updateCollegeTable();
-        //    updateCourseDetailTable();
-        //    updateCourseListTable();
-        // updateCourseTable();
-        //    updateMajorTable();
-        window.localStorage.setItem("updateAllTables", "updated");
-        console.log("updateAllTables is not null!");
-    }
-})();
-
 var insertFlag = -1;
 
 function createTableOrNot(tx, results) {
@@ -312,6 +283,7 @@ function populateDB(db) {
     db.executeSql('CREATE TABLE IF NOT EXISTS coursedetail (id INTEGER PRIMARY KEY,courseListId,courseTeacher,coursePlace,courseTime)', [], createTableOrNot);
     db.executeSql('CREATE TABLE IF NOT EXISTS courseList (id INTEGER PRIMARY KEY,courseCode,courseName,majorId)', [], createTableOrNot);
     db.executeSql('CREATE TABLE IF NOT EXISTS major (id INTEGER PRIMARY KEY, majorName,majorCode,collegeId)', [], createTableOrNot);
+    db.executeSql('CREATE TABLE IF NOT EXISTS favorCourses (id INTEGER PRIMARY KEY, firstPart,secondPart)', [], createTableOrNot);
     db.executeSql('CREATE TABLE IF NOT EXISTS classtime (id INTEGER PRIMARY KEY, classroomId,date,courseId1,courseId2,courseId3,courseId4,courseId5,courseId6,courseId7,courseId8,courseId9,courseId10,courseId11)', [], createTableOrNot);
 
     console.log("create tables because it's not exist!");
@@ -343,112 +315,58 @@ function successCB() {
 
 function updateBuildingTable() {
 
-    //var url = "http://m.mybiti.com/api/api.php?table=building";
     var url = "http://m.bistu.edu.cn/api/api.php?table=building";
     var type = "building";
-    Concurrent.Thread.create(getFromServer, type, url);
-    // getFromServer(type, url);
+    getFromServer(type, url);
 
 }
 
 function updateCourseDetailTable() {
     var url = "http://m.bistu.edu.cn/api/api.php?table=coursedetail";
-    // var url = "http://mobile.bistu.edu.cn/api/api.php?table=coursedetail";
     var type = "courseDetail";
-    Concurrent.Thread.create(getFromServer, type, url);
-    // getFromServer(type, url);
+    getFromServer(type, url);
 }
 
 function updateCourseListTable() {
     var url = "http://m.bistu.edu.cn/api/api.php?table=courselist";
-    // var url = "http://mobile.bistu.edu.cn/api/api.php?table=courselist";
     var type = "courseList";
-    Concurrent.Thread.create(getFromServer, type, url);
-    // getFromServer(type, url);
+    getFromServer(type, url);
 
 }
 
 function updateClassroomTable() {
 
-    // var url = "http://mobile.bistu.edu.cn/api/api.php?table=classroom";
     var url = "http://m.bistu.edu.cn/api/api.php?table=classroom";
     var type = "classroom";
-    Concurrent.Thread.create(getFromServer, type, url);
-    // getFromServer(type, url);
+    getFromServer(type, url);
 
 }
 
 function updateCollegeTable() {
     var url = "http://m.bistu.edu.cn/api/api.php?table=college";
-    // var url = "http://mobile.bistu.edu.cn/api/api.php?table=college";
     var type = "college";
     getFromServer(type, url);
-    // getFromServer(type, url);
 
 }
 
 function updateCourseTable() {
     var url = "http://m.bistu.edu.cn/api/api.php?table=course";
-    // var url = "http://mobile.bistu.edu.cn/api/api.php?table=course";
     var type = "course";
-    Concurrent.Thread.create(getFromServer, type, url);
-    // getFromServer(type, url);
+    getFromServer(type, url);
 
 }
 
 function updateMajorTable() {
     var url = "http://m.bistu.edu.cn/api/api.php?table=major";
-    // var url = "http://mobile.bistu.edu.cn/api/api.php?table=major";
     var type = "major";
-    Concurrent.Thread.create(getFromServer, type, url);
-    // getFromServer(type, url);
+    getFromServer(type, url);
 }
 
 function updateClasstimeTable() {
     var url = "http://m.bistu.edu.cn/api/api.php?table=classtime";
-    // var url = "http://mobile.bistu.edu.cn/api/api.php?table=classtime";
     var type = "classtime";
 
-    Concurrent.Thread.create(getFromServer, type, url);
-
-    // try{
-    // getFromServer(type, url);
-    // }
-    // catch(e){
-    // console.log("try classtime error");
-    // }
-    //
+    getFromServer(type, url);
 
 }
-
-//--------------------------------------------------------------------------------
-//下面代码为测试代码（Ajax调用）
-// var getIntro = document.getElementById("getIntro");
-//
-// getIntro.addEventListener("click",getIntroInfo,false);
-//
-// var myXML = new XMLHttpRequest();
-//
-// function getIntroInfo(){
-//
-// function getInfo(){
-//
-// console.log("Get info");
-// if(myXML.readyState == 4){
-// var respons = myXML.responseText;
-// var jsonText = JSON.parse(respons);
-//
-// log.innerHTML = "<p>" + jsonText[0].id + "-->" + jsonText[0].introName +
-// "</p>";
-//
-// }
-// }
-//
-// myXML.onreadystatechange = getInfo;
-// myXML.open("GET","http://m.bistu.edu.cn/api/api.php?table=intro&action=list",true);
-// myXML.send(null);
-// console.log("Get success");
-//
-// }
-//-------------------------------------------------------------------------------------------
 

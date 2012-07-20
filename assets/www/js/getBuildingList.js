@@ -15,6 +15,9 @@
             $("#classroomBuildingList").html(innerHTML);
             $("#classroomBuildingList").listview('refresh');
             
+            updateClassroomTable();
+            updateClasstimeTable();
+            
             $("#classroomBuildingList a").each(function(index) {
                 
                 $(this).click(function() {
