@@ -3,7 +3,7 @@
 
     var courseListQueryId = window.localStorage.getItem("courseListQueryId");
     var majorName = window.localStorage.getItem("majorQueryCourse");
-    var innerHTML = "";
+    var innerHTML = "",updateCourseFlag = 1;
     console.log("QueryID-->"+courseListQueryId);
     if(iBistuDB != undefined) {
         iBistuDB.transaction(function(tx) {
@@ -19,8 +19,13 @@
                 $("#courseList").html(innerHTML);
                 $("#courseList").listview('refresh');
                 
-                updateCourseTable();
-                updateCourseDetailTable();
+                //based on network state
+                if(updateCourseFlag == 1){
+                    updateCourseTable();
+                    updateCourseDetailTable();
+                    
+                    
+                }
                 
                 /*
                  * 将下面代码放在其他地方都无法执行！Bug...
@@ -43,11 +48,12 @@
                                 }
                                 else{
                                     for(var i = 0; i < len; i++) {
+                                        console.log("start to get course info -->" + re.item(0).courseInfo);
                                         // window.localStorage.setItem("courseDetailName", re.item(i).CourseName);
-                                        window.localStorage.setItem("courseDetailInfo", re.item(i).courseInfo);
-                                        window.localStorage.setItem("courseDetailPeriod", re.item(i).courseXs);
-                                        window.localStorage.setItem("courseDetailScore", re.item(i).courseXf);
-                                        window.localStorage.setItem("courseDetailType", re.item(i).courseXz +"   "+ re.item(i).courseLb);
+                                        window.localStorage.setItem("courseDetailInfo", re.item(0).courseInfo);
+                                        window.localStorage.setItem("courseDetailPeriod", re.item(0).courseXs);
+                                        window.localStorage.setItem("courseDetailScore", re.item(0).courseXf);
+                                        window.localStorage.setItem("courseDetailType", re.item(0).courseXz +"   "+ re.item(0).courseLb);
                                     }
                                 }
                             }, function() {

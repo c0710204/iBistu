@@ -19,16 +19,20 @@
  * course table seems has error!
  * I will fix it tomorrow!
  * 2012/06/09
- *
+ * I have fixed it now!
  *
  *  */
 
-var iBistuDB, collegeItemLength;
+var iBistuDB, updateCollegeFlag = 1;
 var databaseExist = window.localStorage.getItem("databaseExist");
 var updateAllTables = window.localStorage.getItem("updateAllTables");
 var CANUPDATE = true, BASICAL_URL = "", networkState,NETWORK_READY = false;
 
 var Bistu = {
+    rootDir:"",
+    createRoot:function(){
+        
+    },
     createNew:function(){
         
     },
@@ -59,9 +63,11 @@ var Bistu = {
     		else{
     			return null;
     		}
-    }
+    },
+    updateCollegeFlag:1
 };
 
+console.log("updateCollegeFlag is " + Bistu.updateCollegeFlag);
 
 /*
  * create a ajax function to get the data frome server!
@@ -150,7 +156,8 @@ function getFromServer(type, url) {
                         case "course":
                             (function() {
                                 iBistuDB.transaction(function(tx) {
-                                    tx.executeSql('create table if not exists course (id INTEGER PRIMARY KEY,courseName,courseEngName,courseCode,courseInfo,courseXs,courseXf,courseXz,courseLb)');
+                                    tx.executeSql('drop table if exists course');
+                                    tx.executeSql('create table if not exists course (courseName,courseEngName,courseCode,courseInfo,courseXs,courseXf,courseXz,courseLb)');
                                     console.log("Start to insert-->" + type + "  length = " + resp.length);
                                     /*
                                      * Here has a big problem!
@@ -158,15 +165,22 @@ function getFromServer(type, url) {
                                      * items.
                                      * This problem still don't solve!@2012/05/30
                                      * */
+                                    /***
+                                     * Bug fixed!!!
+                                     * I remove the column courseEngName.then it works.
+                                     */
                                     var courseInfos = "";
                                     for(var i = 0, len = resp.length; i < len; i++) {
                                         courseInfos = resp[i].courseInfo.replace(/\n[\s| ]*\r/g, "");
-                                        tx.executeSql("insert into course (courseName,courseEngName,courseCode,courseInfo,courseXs,courseXf,courseXz,courseLb) values ('" + resp[i].courseName + "','" + resp[i].courseEngName + "','" + resp[i].courseCode + "','" + courseInfos + "','" + resp[i].courseXs + "','" + resp[i].courseXf + "','" + resp[i].courseXz + "','" + resp[i].courseLb + "')");
+                                        // courseInfos = '';
+                                        tx.executeSql("insert into course (courseName,courseEngName,courseCode,courseInfo,courseXs,courseXf,courseXz,courseLb) values ('" + resp[i].courseName + "','" + "" + "','" + resp[i].courseCode + "','" + courseInfos + "','" + resp[i].courseXs + "','" + resp[i].courseXf + "','" + resp[i].courseXz + "','" + resp[i].courseLb + "')");
                                     }
 
                                 }, function() {
                                     console.log("insert into course error!!!");
-                                }, successCB);
+                                }, function(){
+                                    console.log("insert into course success!!!")
+                                });
                             })();
                             break;
                         case "classtime":
@@ -202,7 +216,7 @@ function getFromServer(type, url) {
 
                 }
                 catch(e) {
-                    console.log("insert into Table error-->" + type + "-- Type-->" + e.name);
+                    console.log("insert into Table error-->" + type + "-- Type-->" + e.fileName);
                 }
             }
             else {
@@ -223,8 +237,11 @@ function checkConnection() {
     
     if(networkState != "none"){
     		NETWORK_READY = true;
-    		updateCollegeTable();
-    		updateBuildingTable();
+    		
+    		if(updateCollegeFlag == 1){
+    		    updateCollegeTable();
+                updateBuildingTable();
+    		}
     }
     else{
     		NETWORK_READY = false;
@@ -234,30 +251,39 @@ function checkConnection() {
 
 function onDeviceReadyNow() {
     checkConnection();
+    window.requestFileSystem(LocalFileSystem.PERSISTENT, 0, function(fs){
+        Bistu.rootDir = fs.root.fullPath;
+        fs.root.getDirectory("iBistu",{create: true, exclusive: false},function(){
+            console.log("directory iBistu has create");
+        },function(){
+            console.log("directory iBistu can't create");
+        });
+    },function(code){
+        console.log("get local file system error!");
+    });
 }
 
 /*
  * create database or open the database;
  * */
 (function() {
-    /*
-     * 创建数据库，其中由Android源代码可知：
-     * 仅有第一个参数有效果，其它参数现在无效。
-     * */
+    /***************************************************************************
+     * 创建数据库，
+     ***************************************************************************/
     iBistuDB = window.openDatabase("iBistu", "0.1", "BistuDB", 100000);
-
-    if(databaseExist == false) {
-        iBistuDB.transaction(populateDB, errorCB, successCB);
-    }
 
     if(iBistuDB != undefined) {
         databaseExist = true;
         window.localStorage.setItem("databaseExist", "true");
     }
     else {
+        databaseExist = false;
         window.localStorage.setItem("databaseExit", "false");
     }
-
+    
+    if(databaseExist == false) {
+        iBistuDB.transaction(populateDB, errorCB, successCB);
+    }
 })();
 
 var insertFlag = -1;

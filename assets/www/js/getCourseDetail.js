@@ -17,8 +17,8 @@
 	//set texts
     $("#detail_courseName").text(courseName);
     $("#detail_courseInfo").text(courseInfo);
-    $("#courseDetailPeriod").text(coursePeriod);
-    $("#courseDetailClassScore").text(courseScore);
+    $("#courseDetailPeriod").text("学时:"+coursePeriod);
+    $("#courseDetailClassScore").text("学分:"+courseScore);
     $("#courseDetailClassType").text(courseType);
 	
 	console.log("courseName is "+courseInfo);
@@ -39,20 +39,14 @@
 			     innerhtm = "",
 			     beginList = '<ul data-role="listview" data-inset="true" class="ui-listview ui-listview-inset ui-corner-all ui-shadow">';
 			for (var i = 0; i < len; i++) {
-				innerhtm += beginList + "<li><a href='#'>" + r.item(i).courseTeacher + "</a></li>" +
+				innerhtm += beginList + "<li><a href='#'>" + "教师:  " + r.item(i).courseTeacher + "</a></li>" +
 				             "<li><a href='#'>" + r.item(i).courseTime + "</a></li>" +
-				             "<li><a href='#'>" + r.item(i).coursePlace + "</a></li>" + "</ul>";
+				             "<li><a href='#'>" + "地点:  " + r.item(i).coursePlace + "</a></li>" + "</ul>";
 			}
 			
 			$("#courseDetailListView").html(innerhtm);
 			$("#courseDetailListView").trigger("create");
-			// $(".ui-listview").listview("refresh");
 
-			// $("#courseDetailTeacher").text(teacher);
-			// $("#courseDetailClassroom").text(classroom);
-			// $("#courseDetailTime").text(courseTime);
-            // $("#courseDetailListView").listview("refresh");
-            
     		}, function() {
     			console.log("get from coursedetail error!")
     		});
@@ -60,6 +54,78 @@
     }
     	
 	$("#addMyFavor").click(function() {
+	    
+	    var head = $("#courseDetailContent").html() + "";
+	    
+	    // an empty function. should i still write file if it exist!!!?
+	    function writeOrNot(){
+	    }
+	    
+	    /**
+	     * create a directory(favor) to store favor courses!  
+	     */
+	    var rootDir = new DirectoryEntry("iBistu",Bistu.rootDir + "/iBistu");
+	    rootDir.getDirectory("favor",{create: true, exclusive: false},createFavorSuccess,function(){
+	        console.log("create favor failed!!!");
+	    });
+	    
+	    function createFavorSuccess(dirEntry){
+	        console.log("favor dir fullpath is:"+dirEntry.fullPath);
+	        dirEntry.getFile(queryId,{create: true, exclusive: false},putFavorCourse,function(){
+	            console.log("create file failed");
+	        });
+	    }
+	    
+	    function putFavorCourse(fileEntry){
+	        fileEntry.createWriter(function(writer){
+	            writer.write(head);
+	        },queryFailed);
+	        console.log("Ready to write");
+	        console.log("file's full path is " + fileEntry.fullPath);
+	    }
+	    
+	    iBistuDB.transaction(function(tx){
+	        
+	        tx.executeSql('CREATE TABLE IF NOT EXISTS favorCourses (id, firstPart,secondPart)', [], function(tx,results){
+	            console.log("create favorCourses table success");
+	        },function(){
+	            console.log("favorCourses table already exists");
+	        });
+	        
+	        tx.executeSql('select id from favorCourses',[],function(tx,result){
+	            
+	            var r = result.rows,
+	                l = r.length,
+	                flag = false;
+	            
+	            console.log("favorCourses length --> " + l);
+	            
+	            for(var i = 0; i < l; i++){
+	                if(r.item(i).id == queryId){
+	                    flag = true;
+	                }
+	            }
+	            
+	            if(!flag){
+	                tx.executeSql('INSERT INTO favorCourses (id,firstPart,secondPart) values ("' + queryId + '","' + courseName + '","' + "" + '")',[],querySuccess,function(err){
+	                    console.log("favorCourses insert error!");
+	                });
+	            }
+	            
+	        },queryFailed);
+	        
+	        
+	    },errorCB,
+	    successCB);
+	    
+	    function querySuccess(tx,results){
+	        console.log("results.length is " + results.rows.length);
+	    }
+	    
+	    function queryFailed(){
+	        console.log("收藏失败");
+	    }
+	    
 	    alert("添加成功");
     });
 
