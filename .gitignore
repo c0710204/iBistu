@@ -1,8 +1,9 @@
 <<<<<<< HEAD
 *.class
-src/
-libs/
-res/
+src/*
+libs/*
+res/*
+assets/www/tmp/*
 #*
 *$
 *.BAK
