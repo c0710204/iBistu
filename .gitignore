@@ -1,9 +1,13 @@
 <<<<<<< HEAD
 *.class
-src/
-libs/
-res/
-assets/www/tmp/
+src/*
+libs/*
+res/*
+assets/www/tmp/*
+/.settings
+/bin
+/gen
+
 #*
 *$
 *.BAK
@@ -44,8 +48,8 @@ _$*
 *.class
 
 # generated files
-bin/
-gen/
+bin/*
+gen/*
 
 # Local configuration file (sdk path, etc)
 local.properties
