@@ -1,12 +1,9 @@
-<<<<<<< HEAD
 *.class
 src/*
 libs/*
 res/*
 assets/www/tmp/*
 /.settings
-/bin
-/gen
 #*
 *$
 *.BAK
@@ -35,7 +32,6 @@ RCS
 RCSLOG
 SCCS
 _$*
-=======
 # built application files
 *.apk
 *.ap_
@@ -52,5 +48,3 @@ gen/*
 
 # Local configuration file (sdk path, etc)
 local.properties
->>>>>>> origin/master
-bin/iBistuGap.apk

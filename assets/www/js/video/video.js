@@ -24,12 +24,21 @@ VideoPlayer.prototype.play = function(url) {
 /**
  * Load VideoPlayer
  */
-cordova.addConstructor(function() {
-    if (!window.Cordova) {
-    window.Cordova = cordova;
-    };
-                       
-    if(!window.plugins) window.plugins = {};
-    
+
+if(!window.plugins) {
+    window.plugins = {};
+}
+if (!window.plugins.videoPlayer) {
     window.plugins.videoPlayer = new VideoPlayer();
-});
+}
+
+
+// cordova.addConstructor(function() {
+    // if (!window.Cordova) {
+    // window.Cordova = cordova;
+    // };
+//                        
+    // if(!window.plugins) window.plugins = {};
+//     
+    // window.plugins.videoPlayer = new VideoPlayer();
+// });
