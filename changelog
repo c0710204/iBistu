@@ -1,0 +1,147 @@
+commit 26e4af9abb364788e33582055ab9b2ccd5b95d09
+Author: allen <codeday@qq.com>
+Date:   Tue Jul 17 15:17:30 2012 +0800
+
+    check master
+
+commit 24c523bd453965206a83724d57161e3a67d8671d
+Author: allen <codeday@qq.com>
+Date:   Thu Jul 12 08:31:55 2012 +0800
+
+    ready to finish news and yellowpage
+
+commit 3ee2b3c86a0ca3cea1232ccf0cfbc84c32d4bfe0
+Author: mobiledev <mobiledev@soumatoiMac.local>
+Date:   Mon Jul 9 12:07:38 2012 +0800
+
+    network module
+
+commit 53bd34f6cbee8c53a47612975f0315f1f51b6a48
+Author: allen <codeday@qq.com>
+Date:   Mon Jul 9 08:35:20 2012 +0800
+
+    start news and yellowpage modules.
+
+commit a9865e40d0430b0de62405e7c4f1f8d4892cfe54
+Author: allen <codeday@qq.com>
+Date:   Sat Jul 7 18:03:19 2012 +0800
+
+    ready to start with news
+
+commit ebd1679898d57d0fe536439474329bd7fcad5c13
+Author: allen <codeday@qq.com>
+Date:   Sun Jul 1 16:12:09 2012 +0800
+
+    add map module
+
+commit bb08a3b483a1ce57cc9ea9bc72a49a8152c9d194
+Author: allen <codeday@qq.com>
+Date:   Sun Jul 1 12:16:06 2012 +0800
+
+    add map module
+
+commit b7e38259eeb40bc1a1dfdad4e47f37ba352aa31c
+Author: allen <codeday@qq.com>
+Date:   Wed Jun 13 17:58:34 2012 +0800
+
+    update building and classroom
+
+commit 51f2473ebd4ee70213758c678330b45f8b693b92
+Author: allen <codeday@qq.com>
+Date:   Sun Jun 3 21:18:37 2012 +0800
+
+    complete the classroom original...
+
+commit 79ffdaac481dcd9315e105ac4d76e6eea9b66123
+Author: allen <codeday@qq.com>
+Date:   Sat Jun 2 08:05:18 2012 +0800
+
+    ready to add classroom module
+
+commit 091833c7f00d40161c68d818e0ab84a27ff8299e
+Author: allen <codeday@qq.com>
+Date:   Wed May 30 07:53:13 2012 +0800
+
+    2012/5/30
+
+commit 8ee87569047f9d5b6365cc1018baf4d6f7268f66
+Author: allen <codeday@qq.com>
+Date:   Wed May 30 07:52:57 2012 +0800
+
+    2012/5/30
+
+commit 329a2d17fcad62a22aa5510065c626b0e5a3fe1e
+Author: allen <codeday@qq.com>
+Date:   Sat May 26 19:06:49 2012 +0800
+
+    update the major.html & ready to get data of major
+
+commit 051586e8d8ae111000b19f647dff80bcf8aaba44
+Author: allen <codeday@qq.com>
+Date:   Sun May 20 22:30:08 2012 +0800
+
+    ready to get all data.
+
+commit e075529dc8ec9321d65efbd6efed95df20e92b5f
+Author: allen <codeday@qq.com>
+Date:   Sun May 20 11:10:05 2012 +0800
+
+    replace the phonegap 1.6
+
+commit 4da7aa3b8d28699ebd965794f2db6f2433416e7c
+Author: allen <codeday@qq.com>
+Date:   Sun May 20 11:04:17 2012 +0800
+
+    complete college ui and can get data from local database
+
+commit e9291a61d6787a4dd88e19e47e5ae24191d99f62
+Author: allen <codeday@qq.com>
+Date:   Sat May 19 09:42:15 2012 +0800
+
+    remove the id of the college table
+
+commit ef07aaa0f5b017d98a4eb5a0a846c221b949b538
+Author: allen <codeday@qq.com>
+Date:   Thu May 17 21:56:10 2012 +0800
+
+    add query.js
+
+commit c264417d95e7409d33075f4cbc9b5c4ab7769941
+Author: allen <codeday@qq.com>
+Date:   Thu May 17 21:55:26 2012 +0800
+
+    modify the base.js and resolve some problems
+
+commit b508d0594225248ed3123fb51d7dc0928735916d
+Author: allen <codeday@qq.com>
+Date:   Thu May 17 13:00:30 2012 +0800
+
+    ready to use localStorage
+
+commit 0e0256ca65ace596bf668a62831373c6340aa2ab
+Author: allen <codeday@qq.com>
+Date:   Sun Apr 22 10:37:28 2012 +0800
+
+    Ajax...
+
+commit 0af1878b286b96fbdcbeaa71e726338af8a26b7c
+Merge: 2836301 e1dacc6
+Author: allen <codeday@qq.com>
+Date:   Sat Apr 21 23:43:26 2012 +0800
+
+    Merge remote-tracking branch 'origin/master'
+    
+    Conflicts:
+    	.gitignore
+
+commit 283630164d155703b21efaa6cd3e64671b70e003
+Author: allen <codeday@qq.com>
+Date:   Sat Apr 21 23:10:00 2012 +0800
+
+    init reposity
+
+commit e1dacc6975f808a59b53bcbbc159a58583ae9b7d
+Author: xionglun <codeday@qq.com>
+Date:   Sat Apr 21 07:55:04 2012 -0700
+
+    initial commit

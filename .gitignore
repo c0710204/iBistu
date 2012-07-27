@@ -3,6 +3,7 @@
 src/
 libs/
 res/
+assets/www/tmp/
 #*
 *$
 *.BAK

@@ -1,6 +1,7 @@
 (function() {
 
     var buildingQueryId = window.localStorage.getItem("buildingQueryId") + '';
+    // flags: used to show the execute order in the circle.
     var flags = 0, now = new Date(), dateQuery, preDate, nextDate, currentDate;
     var innerHTML = "", liHeader = [], imgs = [];
 
@@ -215,12 +216,14 @@
                         counter++;
 
                     }, function() {
-                        console.log("Get from classtime error!");
+                        if( i == 0){
+                            console.log("Get from classtime error!");
+                        }
                     });
 
                 }
 
-                console.log("inner flags-->" + flags)
+                console.log("inner flags-->" + flags);
                 flags++;
 
             }, function() {
@@ -264,7 +267,7 @@
         });
 
     }
-    
+    // seems never do anything
     console.log("At the bottom of getClassroomList");
 
 })();

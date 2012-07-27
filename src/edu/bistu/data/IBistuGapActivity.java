@@ -10,7 +10,7 @@ public class IBistuGapActivity extends DroidGap {
         super.onCreate(savedInstanceState);
         super.setIntegerProperty("splashscreen",R.drawable.load);
 //        super.setIntegerProperty("loadUrlTimeoutValue", 60000);
-        super.loadUrl("file:///android_asset/www/index.html",20000);
+        super.loadUrl("file:///android_asset/www/index.html",60000);
         
     }
 }
