@@ -64,7 +64,8 @@ var Bistu = {
     			return null;
     		}
     },
-    updateCollegeFlag:1
+    updateCollegeFlag:1,
+    updateActivityFlag:1
 };
 
 console.log("updateCollegeFlag is " + Bistu.updateCollegeFlag);

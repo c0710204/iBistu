@@ -3,22 +3,25 @@
     <head>
         <meta charset="UTF-8">
         <title>video</title>
+
     </head>
     <body>
         <div data-role="page" data-title="video" id="videoPlay">
+            <script type="text/javascript" src="js/video/getVideo.js"></script>
             <div data-role="header" data-position="fixed" data-theme="b">
                 <a href="videoList.html" data-icon="arrow-l" data-mini="true">返回</a><h1 id="videoName"></h1><a href="index.html" data-icon="home" data-mini="true">首页</a>
             </div>
-            <div data-role="content" data-theme="c">
-<!--                 <video style="width:100%; height:100%;" src="http://v.youku.com/player/getM3U8/vid/XMzc2OTAwNjQ4/v.m3u8" controls autoplay></video> -->
-            		
-            		<video width="450" autoplay height="300" controls>
-            			<source src="http://118.228.16.15/youku/677245CAB483382DA7D59B318C/03002001004FFCF07F403103BAF2B17330F3CA-B87F-04B2-5F73-5F3E2B254D56.mp4" type="video/mp4"></source>
-            		</video>
-            		
-            		
+
+            <div data-role="content" style="width:100%;height:auto;background-color: blue;" data-theme="c">
+                <!-- <video style="width:100%; height:100%;"
+                src="http://v.youku.com/player/getM3U8/vid/XMzc2OTAwNjQ4/v.m3u8"
+                controls autoplay></video> -->
+                <a href="#" onclick="playVideoNow('file:///android_asset/www/tmp/test.mp4');">Play Video now!</a>
+                <a href="#" onclick="playVideoNow('http://v.youku.com/player/getM3U8/vid/XMzc2OTAwNjQ4/v.m3u8');">Youku video</a>
+
+
             </div>
-            
+
         </div>
     </body>
 </html>
