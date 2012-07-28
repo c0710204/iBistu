@@ -160,25 +160,26 @@ function getFromServer(type, url) {
                                     tx.executeSql('drop table if exists course');
                                     tx.executeSql('create table if not exists course (courseName,courseEngName,courseCode,courseInfo,courseXs,courseXf,courseXz,courseLb)');
                                     console.log("Start to insert-->" + type + "  length = " + resp.length);
-                                    /*
+                                    /***
                                      * Here has a big problem!
                                      * we can't insert table with 3 thousands
                                      * items.
                                      * This problem still don't solve!@2012/05/30
                                      * */
-                                    /***
+                                    /*
                                      * Bug fixed!!!
                                      * I remove the column courseEngName.then it works.
-                                     */
+                                     ***************************************************************/
                                     var courseInfos = "";
                                     for(var i = 0, len = resp.length; i < len; i++) {
                                         courseInfos = resp[i].courseInfo.replace(/\n[\s| ]*\r/g, "");
                                         // courseInfos = '';
-                                        tx.executeSql("insert into course (courseName,courseEngName,courseCode,courseInfo,courseXs,courseXf,courseXz,courseLb) values ('" + resp[i].courseName + "','" + "" + "','" + resp[i].courseCode + "','" + courseInfos + "','" + resp[i].courseXs + "','" + resp[i].courseXf + "','" + resp[i].courseXz + "','" + resp[i].courseLb + "')");
+                                        tx.executeSql("insert into course (courseName,courseEngName,courseCode,courseInfo,courseXs,courseXf,courseXz,courseLb) values ('" + resp[i].courseName + "','" + "','" + resp[i].courseCode + "','" + courseInfos + "','" + resp[i].courseXs + "','" + resp[i].courseXf + "','" + resp[i].courseXz + "','" + resp[i].courseLb + "')");
                                     }
 
-                                }, function() {
-                                    console.log("insert into course error!!!");
+                                }, function(err) {
+                                    console.log("Code is "+err.code);
+                                    console.log("Msg is " + err.message);
                                 }, function(){
                                     console.log("insert into course success!!!")
                                 });

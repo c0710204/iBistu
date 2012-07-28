@@ -3,6 +3,7 @@ src/*
 libs/*
 res/*
 assets/www/tmp/*
+assets/www/img/images/
 /.settings
 #*
 *$
@@ -48,3 +49,4 @@ gen/*
 
 # Local configuration file (sdk path, etc)
 local.properties
+assets/www/img/images
