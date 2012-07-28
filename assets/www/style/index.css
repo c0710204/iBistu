@@ -64,5 +64,8 @@
 	display: block;
 }
 
+.overflow {
+    overflow: hidden;
+}
 
 

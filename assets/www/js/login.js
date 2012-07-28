@@ -16,6 +16,16 @@ var loginFlag;
 	/*
 	 * used for get public key and login flag.
 	 * */
+	/***
+	 * Bug record!
+	 * I just change the responseText;
+	 * like this:
+	 * //loginFlag = xhr.responseText;    --->
+	 * ---> loginFlag = JSON.parse(xhr.responseText);	
+	 * 
+	 * Time: 2012/07/08 11:30AM
+	 * 
+	 * */
 	function loginAjax(url, type){
 		var xhr = new XMLHttpRequest();
 		xhr.onreadystatechange = function(){
@@ -23,10 +33,12 @@ var loginFlag;
 				console.log("ajax status-->" + xhr.status);
 				if(xhr.status == 200){
 					if(type == "key"){
-						pubkey = xhr.responseText;
+						pubkey = JSON.parse(xhr.responseText);
 					}
 					else if(type == "flag"){
-						loginFlag = xhr.responseText;
+						//loginFlag = xhr.responseText;
+						loginFlag = JSON.parse(xhr.responseText);
+						
 						window.localStorage.setItem("loginToken",loginFlag);
 					}
 					console.log(xhr.responseText);

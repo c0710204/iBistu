@@ -1,10 +1,27 @@
 <!DOCTYPE HTML>
 <html lang="en-US">
-<head>
-	<meta charset="UTF-8">
-	<title>Video</title>
-</head>
-<body>
-	
-</body>
+    <head>
+        <meta charset="UTF-8">
+        <title>video</title>
+
+    </head>
+    <body>
+        <div data-role="page" data-title="video" id="videoPlay">
+            <script type="text/javascript" src="js/video/getVideo.js"></script>
+            <div data-role="header" data-position="fixed" data-theme="b">
+                <a href="videoList.html" data-icon="arrow-l" data-mini="true">返回</a><h1 id="videoName"></h1><a href="index.html" data-icon="home" data-mini="true">首页</a>
+            </div>
+
+            <div data-role="content" style="width:100%;height:auto;background-color: blue;" data-theme="c">
+                <!-- <video style="width:100%; height:100%;"
+                src="http://v.youku.com/player/getM3U8/vid/XMzc2OTAwNjQ4/v.m3u8"
+                controls autoplay></video> -->
+                <a href="#" onclick="playVideoNow('http://118.228.16.44/youku/6754C2FAC3B834F5EEAD4FC2/0300200100501232214EE707540B3195B66524-F46C-C889-00B5-A0A096FF369E.mp4');">Play Video now!</a>
+                <a href="#" onclick="playVideoNow('http://v.youku.com/player/getM3U8/vid/XMzc2OTAwNjQ4/v.m3u8');">Youku video</a>
+
+
+            </div>
+
+        </div>
+    </body>
 </html>

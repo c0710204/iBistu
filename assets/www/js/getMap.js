@@ -12,18 +12,20 @@ function moveMap(location){
     
     if(location == "xy"){
         // 116.353362,40.044236
-        loc.x = 116.353362;
-        loc.y = 40.044236;
+        loc.x = 116.353924;
+        loc.y = 40.044281;
     }
     else if (location == "jxq"){
         //116.389438,39.995024
-        loc.x = 116.389438;
-        loc.y = 39.995024;
+        //16.389874,39.99368
+        loc.x = 116.389874;
+        loc.y = 39.99368;
     }
     else if(location == "qh"){
         //116.349014,40.049718
-        loc.x = 116.349014;
-        loc.y = 40.049718;
+        // 116.348291,40.048896
+        loc.x = 116.348291;
+        loc.y = 40.048896;
     }
     
     var map = new BMap.Map("mapContainer");

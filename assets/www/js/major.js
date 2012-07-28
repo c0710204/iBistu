@@ -19,7 +19,9 @@ function getMajorList(tx) {
         $("#collegeNameInMajor").text(collegeName);
         $("#majorList").html(innerHTML);
         $("#majorList").listview('refresh');
-
+        
+        updateCourseListTable();
+        
         $("#majorList a").each(function(index) {
             $(this).click(function() {
                 var queryID = $(this).attr("id");
