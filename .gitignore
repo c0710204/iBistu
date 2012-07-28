@@ -50,3 +50,4 @@ gen/*
 # Local configuration file (sdk path, etc)
 local.properties
 assets/www/img/images
+
